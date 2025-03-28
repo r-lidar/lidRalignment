@@ -1,0 +1,30 @@
+Package: lidRalignment
+Type: Package
+Title: ALS MLS and TLS forest plot alignment
+Version: 1.0
+Authors@R: person("Jean-Romain", "Roussel", role = c("aut", "cre"), email = "info@r-lidar.com")
+Description: Alignment of forest plot with different strateies to align ALS with MLS/TLS or MLS with TLS even in complexe cases with major misalignments.
+License: GPL (>= 2)
+Depends:
+    R (>= 4.0.0)
+Imports: 
+    lidR (>= 4.2.0),
+    lasR,
+    terra,
+    sf,
+    data.table,
+    RANN,
+    rlas,
+    pbapply,
+    rgl,
+    grDevices,
+    methods,
+    Rcpp
+Remotes:
+    r-lidar/lasR (>= 0.13.7)
+RoxygenNote: 7.3.2
+Encoding: UTF-8
+LinkingTo: 
+    Rcpp,
+    RcppProgress,
+    lidR
