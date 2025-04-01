@@ -240,7 +240,7 @@ find_cloudcompare = function()
 
   if (os == "windows")
   {
-    path = "C:/Program Files/CloudCompare/CloudCompare.exe"
+    path = "\"C:/Program Files/CloudCompare/CloudCompare.exe\""
     if (!file.exists(path)) stop(paste("Cannot find CloudCompare in", path))
     return(path)
   }
