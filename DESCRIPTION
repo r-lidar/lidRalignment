@@ -9,7 +9,7 @@ Depends:
     R (>= 4.0.0)
 Imports: 
     lidR (>= 4.2.0),
-    lasR,
+    lasR (>= 0.13.7),
     terra,
     sf,
     data.table,
@@ -21,7 +21,7 @@ Imports:
     methods,
     Rcpp
 Remotes:
-    r-lidar/lasR (>= 0.13.7)
+    r-lidar/lasR
 RoxygenNote: 7.3.2
 Encoding: UTF-8
 LinkingTo: 
