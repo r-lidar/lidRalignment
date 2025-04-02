@@ -30,9 +30,11 @@ extract_features = function(las, strategy = "chm-dtm")
     chm = lidR::rasterize_canopy(las, 0.25)
 
     dtm_points = terra::as.data.frame(dtm, xy = TRUE)
+    dtm_points$Classification = 2L
     chm_points = terra::as.data.frame(chm, xy = TRUE)
+    chm_points$Classification = 1L
     points = rbind(dtm_points, chm_points)
-    names(points) = c('X', 'Y', 'Z')
+    names(points) = c('X', 'Y', 'Z', "Classification")
 
     header = rlas::header_create(points)
     res = lidR::LAS(points, header)
