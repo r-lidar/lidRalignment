@@ -100,6 +100,7 @@ if (interactive()) show_alignment(ref, mov2, M1, size = 3)
 Mz = diag(4)
 if (!ref_is_tls)
 {
+  M = combine_transformations(M0, M1)
 
   ref_gnd = filter_ground(ref)
   mov_gnd = filter_ground(mov)
