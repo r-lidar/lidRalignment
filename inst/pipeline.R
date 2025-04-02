@@ -9,7 +9,7 @@ fmov = "mls_file.las"
 radius = 20
 overlap = NA
 
-ref_is_tls = TRUE
+ref_is_tls = FALSE
 mov_is_tls = TRUE
 
 cc = find_cloudcompare()
@@ -96,6 +96,20 @@ mov2 = transform_las(mov, M0)
 M1 = icp(ref, mov2, overlap = overlap, cc = cc)
 if (interactive()) show_alignment(ref, mov2, M1, size = 3)
 
+# Perform a final fine Z registration on ground points
+Mz = diag(4)
+if (!ref_is_tls)
+{
+
+  ref_gnd = filter_ground(ref)
+  mov_gnd = filter_ground(mov)
+  mov_gnd = transform_las(mov_gnd, M)
+  if (interactive()) show_alignment(ref_gnd, mov_gnd, size = 3)
+
+  Mz = icp(ref_gnd, mov_gnd, overlap = overlap, skip_txy = TRUE, rot = "NONE", cc = cc)
+  if (interactive()) show_alignment(ref_gnd, mov_gnd, Mz, size = 3)
+}
+
 # ==== FINAL REGISTRATION ====
 
 # The moving point cloud was transformed as follows:
@@ -105,7 +119,7 @@ if (interactive()) show_alignment(ref, mov2, M1, size = 3)
 # in the global coordinate system.
 Mlocal  = translation_matrix(-center_x, -center_y, -center_z)
 Mglobal = translation_matrix(global_shift_x, global_shift_y, global_shift_z)
-Mregistration = combine_transformations(Mlocal, M0, M1, Mglobal)
+Mregistration = combine_transformations(Mlocal, M0, M1, Mz, Mglobal)
 
 # Apply the final transformation to register the full point cloud.
 ofile = transform_las(fmov, Mregistration, sf::st_crs(ref))
