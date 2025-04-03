@@ -122,5 +122,11 @@ Mlocal  = translation_matrix(-center_x, -center_y, -center_z)
 Mglobal = translation_matrix(global_shift_x, global_shift_y, global_shift_z)
 Mregistration = combine_transformations(Mlocal, M0, M1, Mz, Mglobal)
 
+# Plot center translation
+Mtrans = combine_transformations(M0, M1, Mz)
+Mtrans[1:3, 1:3] = diag(3) # Retain only translation
+rtm_info(Mtrans)
+
+
 # Apply the final transformation to register the full point cloud.
 ofile = transform_las(fmov, Mregistration, sf::st_crs(ref))

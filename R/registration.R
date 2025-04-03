@@ -26,7 +26,7 @@
 #' }
 #'
 #' @export
-brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 4, verbose = TRUE, ...)
+brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbose = TRUE, ...)
 {
   p = list(...)
 
@@ -52,7 +52,7 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 4, verbos
     sqrt(mean(D[1:n]^2))
   }
 
-  compute_rms <- function(params)
+  compute_rms <- function(params, vref, umov)
   {
     angle <- params["angle"]
     dx <- params["dx"]
@@ -81,7 +81,15 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 4, verbos
   dy <- seq(-max_offset, max_offset, by = 1)
   param_grid <- expand.grid(angle = angles, dx = dx, dy = dy)
 
-  results <- pbapply::pbapply(param_grid, 1, compute_rms)
+  n = lidR::get_lidr_threads()
+  groups <- cut(seq(1, nrow(param_grid)), breaks = n*4, labels = FALSE)
+  param_grid <- split(param_grid, groups)
+
+  results <- pbapply::pblapply(param_grid, function(x, vref, umov)
+  {
+    ans = apply(x, 1, compute_rms, vref = vref, umov = umov)
+    ans = data.table::rbindlist(ans)
+  }, vref = vref, umov = umov, cl = n)
   results <- data.table::rbindlist(results)
   best_params <- results[which.min(results$rms),]
 
@@ -112,12 +120,12 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 4, verbos
   a = best_params$angle*180/pi
 
   # Fine registration
-  angles <- seq(a-2, a+2, by = 1) * pi / 180
+  angles <- seq(a-3, a+2, by = 1) * pi / 180
   dx <- seq(best_params$dx-1, best_params$dx+1, by = .25)
   dy <- seq(best_params$dy-1, best_params$dy+1, by = .25)
   param_grid <- expand.grid(angle = angles, dx = dx, dy = dy)
 
-  results <- pbapply::pbapply(param_grid, 1, compute_rms)
+  results <- pbapply::pbapply(param_grid, 1, compute_rms, vref = vref, umov = umov)
   results <- data.table::rbindlist(results)
   best_params <- results[which.min(results$rms),]
 
@@ -240,8 +248,9 @@ find_cloudcompare = function()
 
   if (os == "windows")
   {
-    path = "\"C:/Program Files/CloudCompare/CloudCompare.exe\""
+    path = "C:/Program Files/CloudCompare/CloudCompare.exe"
     if (!file.exists(path)) stop(paste("Cannot find CloudCompare in", path))
+    path = "\"C:/Program Files/CloudCompare/CloudCompare.exe\""
     return(path)
   }
   if (os == "osx")
