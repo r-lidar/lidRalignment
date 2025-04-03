@@ -97,7 +97,13 @@ transform_las <- function(las, M, crs = sf::NA_crs_)
 
     xyz = as.data.frame(transformed[, 1:3])
     names(xyz) <- c("X", "Y", "Z")
-    h = rlas::header_create(xyz)
+    h = lidR::header(las)
+    h[["X offset"]] = ceiling(min(xyz[["X"]]))
+    h[["Y offset"]] = ceiling(min(xyz[["Y"]]))
+    h[["Z offset"]] = ceiling(min(xyz[["Z"]]))
+    lidR::quantize(xyz[["X"]], h[["X scale factor"]], h[["X offset"]])
+    lidR::quantize(xyz[["Y"]], h[["Y scale factor"]], h[["Y offset"]])
+    lidR::quantize(xyz[["Z"]], h[["Z scale factor"]], h[["Z offset"]])
     las_new <- lidR::LAS(xyz, h)
 
     lidR::st_crs(las_new) <- crs

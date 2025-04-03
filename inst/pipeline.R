@@ -93,6 +93,7 @@ if (interactive()) show_alignment(ref, mov, M0, size = 3)
 mov2 = transform_las(mov, M0)
 
 # Perform a finer alignment using ICP with CloudCompare.
+overlap = adjust_overlap(overlap, radius, M0)
 M1 = icp(ref, mov2, overlap = overlap, cc = cc)
 if (interactive()) show_alignment(ref, mov2, M1, size = 3)
 
@@ -111,6 +112,8 @@ if (!ref_is_tls)
   if (interactive()) show_alignment(ref_gnd, mov_gnd, Mz, size = 3)
 }
 
+M = combine_transformations(M0, M1, Mz)
+
 # ==== FINAL REGISTRATION ====
 
 # The moving point cloud was transformed as follows:
@@ -120,10 +123,10 @@ if (!ref_is_tls)
 # in the global coordinate system.
 Mlocal  = translation_matrix(-center_x, -center_y, -center_z)
 Mglobal = translation_matrix(global_shift_x, global_shift_y, global_shift_z)
-Mregistration = combine_transformations(Mlocal, M0, M1, Mz, Mglobal)
+Mregistration = combine_transformations(Mlocal, M, Mglobal)
 
 # Plot center translation
-Mtrans = combine_transformations(M0, M1, Mz)
+Mtrans = M
 Mtrans[1:3, 1:3] = diag(3) # Retain only translation
 rtm_info(Mtrans)
 

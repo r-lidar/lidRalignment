@@ -43,15 +43,6 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
     pc + matrix(c(dx, dy, 0), nrow = nrow(pc), ncol = 3, byrow = TRUE)
   }
 
-  rms <- function(pc1, pc2)
-  {
-    K = RANN::nn2(pc1, pc2, k = 1)
-    D = K$nn.dists
-    D = sort(as.numeric(D))
-    n = length(D)/2
-    sqrt(mean(D[1:n]^2))
-  }
-
   compute_rms <- function(params, vref, umov)
   {
     angle <- params["angle"]
@@ -64,7 +55,7 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
     #rgl::plot3d(vref, col = "blue")
     #rgl::points3d(translated, col = "red")
 
-    rms_val <- rms(vref, translated)
+    rms_val <- compare_alignment(vref, translated)
 
     list(angle = angle, dx = dx, dy = dy, rms = rms_val)
   }
@@ -76,10 +67,11 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
   #plot(decimate_points(mov, random_per_voxel(res)), add = x, pal = "red", size = 2)
 
   # Coarse registration
-  angles <- seq(-180, 180, by = 2) * pi / 180
-  dx <- seq(-max_offset, max_offset, by = 1)
-  dy <- seq(-max_offset, max_offset, by = 1)
+  angles <- c(0, seq(-180, 180, by = 2) * pi / 180)
+  dx <- c(0, seq(-max_offset, max_offset, by = 1))
+  dy <- c(0, seq(-max_offset, max_offset, by = 1))
   param_grid <- expand.grid(angle = angles, dx = dx, dy = dy)
+
 
   n = lidR::get_lidr_threads()
   groups <- cut(seq(1, nrow(param_grid)), breaks = n*4, labels = FALSE)
@@ -92,6 +84,8 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
   }, vref = vref, umov = umov, cl = n)
   results <- data.table::rbindlist(results)
   best_params <- results[which.min(results$rms),]
+
+  rmsi = results$rms[1]
 
   if (!is.null(p$debug))
   {
@@ -158,7 +152,8 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
   M[1,4] = best_params$dx
   M[2,4] = best_params$dy
 
-  attr(M, "rms") = best_params$rms
+  attr(M, "rms_init") = round(rmsi, 4)
+  attr(M, "rms") = round(best_params$rms, 4)
 
   if (verbose) rtm_info(M)
 
@@ -260,4 +255,27 @@ find_cloudcompare = function()
 
   stop("OS not detected")
 }
+
+#' Compare the Alignment of Two Point Clouds
+#'
+#' Computes the root mean square error (RMSE) of the nearest neighbor distances between two point clouds.
+#' This function measures how well `pc2` aligns with `pc1` by finding the closest points in `pc1` for
+#' each point in `pc2` and computing the RMSE for half of the point cloud. It uses the 50% of the
+#' most aligned points to account for non-overlapping features. Thus, the returned value is not
+#' a true RMSE but rather an arbitrary alignment score.
+#'
+#' @param pc1 A matrix of XYZ coordinates or a `LAS` object from the `lidR` package.
+#' @param pc2 A matrix of XYZ coordinates or a `LAS` object from the `lidR` package.
+#' @noMd
+compare_alignment <- function(pc1, pc2)
+{
+  if (methods::is(pc1, "LAS")) pc1 = as.matrix(sf::st_coordinates(pc1))
+  if (methods::is(pc2, "LAS")) pc2 = as.matrix(sf::st_coordinates(pc2))
+  K = RANN::nn2(pc1, pc2, k = 1)
+  D = K$nn.dists
+  D = sort(as.numeric(D))
+  n = length(D)/2
+  sqrt(mean(D[1:n]^2))
+}
+
 

@@ -8,7 +8,7 @@ brute_force_registration(
   ref,
   mov,
   res = 0.5,
-  max_offset = 4,
+  max_offset = 8,
   verbose = TRUE,
   ...
 )
