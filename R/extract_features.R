@@ -39,7 +39,7 @@ extract_features = function(las, strategy = "chm-dtm")
     header = rlas::header_create(points)
     res = lidR::LAS(points, header)
     lidR::st_crs(res) = lidR::st_crs(las)
-
+    attr(res, "strategy") = "chm-dtm"
     return(res)
   }
 

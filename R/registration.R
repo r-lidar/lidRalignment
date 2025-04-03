@@ -30,6 +30,17 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
 {
   p = list(...)
 
+  strategy_ref = attr(ref, "strategy")
+  strategy_mov = attr(mov, "strategy")
+  strategy = NULL
+
+  if (is.null(strategy_ref) || is.null(strategy_mov))
+    warning("Input point clouds do not have an attribute 'strategy' that record the registration strategy")
+  else if (strategy_mov != strategy_ref)
+    stop("Input point clouds do not have the same attribute 'strategy' that record the registration strategy")
+  else
+    strategy = strategy_ref
+
   rotate_z <- function(pc, angle)
   {
     rotation_matrix <- matrix(c(cos(angle), -sin(angle), 0,
@@ -38,9 +49,9 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
     t(rotation_matrix %*% t(pc))
   }
 
-  translate_xy <- function(pc, dx, dy)
+  translate_xyz <- function(pc, dx, dy, dz)
   {
-    pc + matrix(c(dx, dy, 0), nrow = nrow(pc), ncol = 3, byrow = TRUE)
+    pc + matrix(c(dx, dy, dz), nrow = nrow(pc), ncol = 3, byrow = TRUE)
   }
 
   compute_rms <- function(params, vref, umov)
@@ -48,20 +59,22 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
     angle <- params["angle"]
     dx <- params["dx"]
     dy <- params["dy"]
+    dz <- params["dz"]
 
     rotated <- rotate_z(umov, angle)
-    translated <- translate_xy(rotated, dx, dy)
+    translated <- translate_xyz(rotated, dx, dy, dz)
 
     #rgl::plot3d(vref, col = "blue")
     #rgl::points3d(translated, col = "red")
 
     rms_val <- compare_alignment(vref, translated)
 
-    list(angle = angle, dx = dx, dy = dy, rms = rms_val)
+    list(angle = angle, dx = dx, dy = dy, dz = dz, rms = rms_val)
   }
 
   vref = as.matrix(sf::st_coordinates(lidR::decimate_points(ref, lidR::random_per_voxel(res))))
   umov = as.matrix(sf::st_coordinates(lidR::decimate_points(mov, lidR::random_per_voxel(res))))
+
 
   #x = plot(decimate_points(ref, random_per_voxel(res)), pal = "yellow", size = 2)
   #plot(decimate_points(mov, random_per_voxel(res)), add = x, pal = "red", size = 2)
@@ -70,7 +83,17 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
   angles <- c(0, seq(-180, 180, by = 2) * pi / 180)
   dx <- c(0, seq(-max_offset, max_offset, by = 1))
   dy <- c(0, seq(-max_offset, max_offset, by = 1))
-  param_grid <- expand.grid(angle = angles, dx = dx, dy = dy)
+  param_grid <- expand.grid(angle = angles, dx = dx, dy = dy, dz = 0)
+
+  if (!is.null(strategy) && strategy == "chm-dtm")
+  {
+    dtm_ref = pixel_metrics(ref, ~min(Z), 1)
+    dtm_mov = pixel_metrics(mov, ~min(Z), 1)
+
+    Z0 = terra::extract(dtm_mov, cbind(0,0))$V1
+    Z = terra::extract(dtm_ref, param_grid[,2:3])$V1
+    param_grid$dz = Z-Z0
+  }
 
 
   n = lidR::get_lidr_threads()
@@ -117,9 +140,18 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
   angles <- seq(a-3, a+2, by = 1) * pi / 180
   dx <- seq(best_params$dx-1, best_params$dx+1, by = .25)
   dy <- seq(best_params$dy-1, best_params$dy+1, by = .25)
-  param_grid <- expand.grid(angle = angles, dx = dx, dy = dy)
+  dz <- seq(best_params$dz-0.5, best_params$dz+0.5, by = 0.1)
+  param_grid <- expand.grid(angle = angles, dx = dx, dy = dy, dz = dz)
 
-  results <- pbapply::pbapply(param_grid, 1, compute_rms, vref = vref, umov = umov)
+  n = lidR::get_lidr_threads()
+  groups <- cut(seq(1, nrow(param_grid)), breaks = n*4, labels = FALSE)
+  param_grid <- split(param_grid, groups)
+
+  results <- pbapply::pblapply(param_grid, function(x, vref, umov)
+  {
+    ans = apply(x, 1, compute_rms, vref = vref, umov = umov)
+    ans = data.table::rbindlist(ans)
+  }, vref = vref, umov = umov, cl = n)
   results <- data.table::rbindlist(results)
   best_params <- results[which.min(results$rms),]
 
@@ -151,6 +183,7 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
   M = rotation_matrix(best_params$angle*180/pi)
   M[1,4] = best_params$dx
   M[2,4] = best_params$dy
+  M[3,4] = best_params$dz
 
   attr(M, "rms_init") = round(rmsi, 4)
   attr(M, "rms") = round(best_params$rms, 4)
