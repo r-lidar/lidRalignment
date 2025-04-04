@@ -40,11 +40,3 @@ The function performs coarse registration by evaluating transformations over a l
 followed by a fine registration step with a refined grid. RMS error is used to assess the alignment quality.
 Optionally, debug visualizations can be displayed using `rgl`.
 }
-\examples{
-\dontrun{
-ref <- readLAS("reference.las")
-mov <- readLAS("moving.las")
-M <- brute_force_registration(ref, mov, res = 0.5, max_offset = 4, debug = TRUE)
-}
-
-}

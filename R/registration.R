@@ -19,12 +19,6 @@
 #' Optionally, debug visualizations can be displayed using `rgl`.
 #'
 #' @examples
-#' \dontrun{
-#' ref <- readLAS("reference.las")
-#' mov <- readLAS("moving.las")
-#' M <- brute_force_registration(ref, mov, res = 0.5, max_offset = 4, debug = TRUE)
-#' }
-#'
 #' @export
 brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbose = TRUE, ...)
 {
