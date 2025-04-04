@@ -43,7 +43,7 @@ The iterative closest point functions currently rely on [CloudCompare](https://w
 A generic pipeline that has been tested on multiple datasets is shipped with the package. Users can open it in `RStudio` with:
 
 ```r
-rstudioapi::navigateToFile(system.file("", "generic_pipeline.R", package="lidRalignment"))
+rstudioapi::navigateToFile(system.file("", "pipeline.R", package="lidRalignment"))
 ```
 
 The R script works as follows:
