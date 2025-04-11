@@ -6,17 +6,16 @@ library(lidRalignment)
 fref = "als_file.las"
 fmov = "mls_file.las"
 
+display = TRUE
 radius = 20
-overlap = NA
-
-ref_is_tls = FALSE
-mov_is_tls = TRUE
+ref_is_ground_based = TRUE
+mov_is_ground_based = TRUE
 
 cc = find_cloudcompare()
 
 # ==== AUTOMATIC CONFIGURATION ====
 
-set_lidr_threads(0)
+set_lidr_threads(0.5)
 
 reader_ref = readALS
 filter_ref = ""
@@ -26,13 +25,8 @@ reader_mov = readTLS
 filter_mov = "-keep_random_fraction 0.2"
 csf_mov = csf(rigidness = 3, class_threshold = 0.05, cloth_resolution = 0.25)
 
-strategy = "chm-dtm"
-res = 2
-
-if (!ref_is_tls & is.na(overlap)) overlap = 90
-if (ref_is_tls & is.na(overlap)) overlap = 30
-if (ref_is_tls) { reader_ref = readTLS ; csf_ref = csf_mov ; res = 0.5}
-if (ref_is_tls & mov_is_tls) { filter_ref = filter_mov = filter = "-keep_random_fraction 0.1" ; strategy = "mls-tls" }
+if (ref_is_ground_based) { reader_ref = readTLS ; csf_ref = csf_mov }
+if (ref_is_ground_based & mov_is_ground_based) { filter_ref = filter_mov = filter = "-keep_random_fraction 0.1"}
 
 # ==== LOAD THE DATA ====
 
@@ -67,52 +61,80 @@ global_shift_z = min(filter_ground(las_ref)$Z)
 center_z = min(filter_ground(las_mov)$Z)
 
 # We cannot align using all points; we need to extract alignable features.
-ref = extract_features(las_ref, strategy = strategy)
-mov = extract_features(las_mov, strategy = strategy)
+ref = extract_features(las_ref, strategy = "chm-dtm")
+mov = extract_features(las_mov, strategy = "chm-dtm")
 
 # Translate the point clouds to center them at (0,0,0) regardless of the original coordinate system.
 ref = translate_las(ref, -global_shift_x, -global_shift_y, -global_shift_z)
 mov = translate_las(mov, -center_x, -center_y, -center_z)
 
 # Display the alignment.
-show_alignment(ref, mov, size = 3)
+if (display) show_alignment(ref, mov, size = 3)
 
 # Notify when this part of the script is complete.
-if (interactive()) beepr::beep(1)
+beepr::beep(1)
 
 # ==== ALIGNMENT PROCESS ====
+
+# ----- Step 1: Coarse alignment -----
 
 # The first step is a coarse brute-force alignment.
 # ICP cannot align the point clouds if they are too misaligned.
 # The brute-force alignment rotates along Z and translates along XY.
 # This is sufficient to achieve a rough initial registration.
-M0 = brute_force_registration(ref, mov, res = res)
-if (interactive()) show_alignment(ref, mov, M0, size = 3)
+M0 = brute_force_registration(ref, mov, res = 2, debug = T)
+if (display) show_alignment(ref, mov, M0, size = 3)
+
+# ----- Step 2: Fine alignment -----
+
+# Perform a finer alignment using ICP with CloudCompare.
 
 # Apply the initial transformation to the moving point cloud.
 mov2 = transform_las(mov, M0)
 
-# Perform a finer alignment using ICP with CloudCompare.
-overlap = adjust_overlap(overlap, radius, M0)
+overlap = adjust_overlap(90, radius, M0)
 M1 = icp(ref, mov2, overlap = overlap, cc = cc)
-if (interactive()) show_alignment(ref, mov2, M1, size = 3)
+if (display) show_alignment(ref, mov2, M1, size = 3)
+
+M = combine_transformations(M0, M1)
+
+# ----- Step 3: Finer Z alignment -----
 
 # Perform a final fine Z registration on ground points
-Mz = diag(4)
-if (!ref_is_tls)
-{
-  M = combine_transformations(M0, M1)
 
-  ref_gnd = filter_ground(ref)
-  mov_gnd = filter_ground(mov)
-  mov_gnd = transform_las(mov_gnd, M)
-  if (interactive()) show_alignment(ref_gnd, mov_gnd, size = 3)
+ref_gnd = filter_ground(ref)
+mov_gnd = filter_ground(mov)
+mov_gnd = transform_las(mov_gnd, M)
+if (display) show_alignment(ref_gnd, mov_gnd, size = 3)
 
-  Mz = icp(ref_gnd, mov_gnd, overlap = overlap, skip_txy = TRUE, rot = "NONE", cc = cc)
-  if (interactive()) show_alignment(ref_gnd, mov_gnd, Mz, size = 3)
-}
+Mz = icp(ref_gnd, mov_gnd, overlap = overlap, skip_txy = TRUE, rot = "NONE", cc = cc)
+if (display) show_alignment(ref_gnd, mov_gnd, Mz, size = 3)
 
 M = combine_transformations(M0, M1, Mz)
+
+# ----- Step 4: Super fine (centimeter) alignment for ground-based -----
+
+# Perform a fine registration based on tree trunks
+
+Mfiner = diag(4)
+
+if (ref_is_ground_based & mov_is_ground_based)
+{
+  ref = extract_features(las_ref, strategy = "trunks")
+  mov = extract_features(las_mov, strategy = "trunks")
+
+  ref = translate_las(ref, -global_shift_x, -global_shift_y, -global_shift_z)
+  mov = translate_las(mov, -center_x, -center_y, -center_z)
+  if (display) show_alignment(ref, mov, M, size = 3)
+
+  mov2 = transform_las(mov, M)
+  overlap = adjust_overlap(30, radius, M)
+
+  Mfiner = icp(ref, mov2, overlap = overlap, cc = cc)
+  if (display) show_alignment(ref, mov2, Mfiner, size = 3)
+}
+
+M = combine_transformations(M0, M1, Mz, Mfiner)
 
 # ==== FINAL REGISTRATION ====
 
@@ -124,7 +146,6 @@ M = combine_transformations(M0, M1, Mz)
 Mlocal  = translation_matrix(-center_x, -center_y, -center_z)
 Mglobal = translation_matrix(global_shift_x, global_shift_y, global_shift_z)
 Mregistration = combine_transformations(Mlocal, M, Mglobal)
-
 
 # Apply the final transformation to register the full point cloud.
 ofile = transform_las(fmov, Mregistration, sf::st_crs(ref))

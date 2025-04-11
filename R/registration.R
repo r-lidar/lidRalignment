@@ -190,7 +190,7 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
 #' temporary files.
 #' @export
 #' @md
-icp = function(vref, umov, min_error_diff = 1e-5, overlap = 90, rot = "Z", skip_txy = FALSE, cc = find_cloudcompare(), verbose = TRUE)
+icp = function(vref, umov, min_error_diff = 1e-5, overlap = 90, rot = "Z", skip_txy = FALSE, skip_tz = FALSE, cc = find_cloudcompare(), verbose = TRUE)
 {
   . <- X <- Y <- Z <- NULL
 
@@ -206,8 +206,9 @@ icp = function(vref, umov, min_error_diff = 1e-5, overlap = 90, rot = "Z", skip_
   data.table::fwrite(umov@data[, .(X,Y,Z)], oumov, sep = " ", col.names = FALSE)
 
   skip_txy = if(skip_txy) " -SKIP_TX -SKIP_TY " else ""
+  skip_tz  = if(skip_tz) " -SKIP_TZ " else ""
 
-  tool = paste0("-ICP -MIN_ERROR_DIFF ", min_error_diff, " -OVERLAP ", overlap, " -ROT ", rot, skip_txy)
+  tool = paste0("-ICP -MIN_ERROR_DIFF ", min_error_diff, " -OVERLAP ", overlap, " -ROT ", rot, skip_txy, skip_tz)
   args = paste0("-SILENT -O ", oumov, " -O ", ovref)
   cmd  = paste(cc, args, tool)
 

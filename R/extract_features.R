@@ -10,7 +10,7 @@
 #' @details
 #' - The `"chm-dtm"` strategy extracts a digital terrain model (DTM) and a canopy height model (CHM),
 #'   and merges them into a new `LAS` object.
-#' - The `"mls-tls"` strategy applies a series of filtering and processing steps including noise removal,
+#' - The `"trunks"` strategy applies a series of filtering and processing steps including noise removal,
 #'   smoothing, decimation, anisotropy filtering, and connected component filtering in order to extract
 #'   trees in the first 4 meters of the point clouds
 #' @export
@@ -19,7 +19,7 @@ extract_features = function(las, strategy = "chm-dtm")
 {
   .N <- N <- hag <- anisotropy <- clusterID <- NULL
 
-  strategy = match.arg(strategy, c("chm-dtm", "mls-tls"))
+  strategy = match.arg(strategy, c("chm-dtm", "trunks"))
 
   if (strategy == "chm-dtm")
   {
@@ -43,8 +43,11 @@ extract_features = function(las, strategy = "chm-dtm")
     return(res)
   }
 
-  if (strategy == "mls-tls")
+  if (strategy == "trunks")
   {
+    #las = readLAS("~/Téléchargements/las_ref.las")
+    #las = readLAS("~/Téléchargements/las_mov.las")
+
     cat("Digital Terrain Model\n")
     dtm = lidR::rasterize_terrain(las, res = 0.1)
     las = lidR::height_above_ground(las, dtm = dtm, algorithm = lidR::tin())
@@ -52,18 +55,16 @@ extract_features = function(las, strategy = "chm-dtm")
     cat("Slice between 0.15 and 3 m\n")
     las = lidR::filter_poi(las, hag > 0.15, hag < 3)
 
-    cat("Noise removal\n")
-    las = lidR::classify_noise(las, lidR::ivf(0.2, 100))
-    las = lidR::remove_noise(las)
+    cat("3 cm point decimation\n")
+    vox = lidR:::C_voxel_id(las, 0.03)
+    vox = duplicated(vox)
+    las = las[!vox]
 
     cat("3D  Smoothing\n")
     las = smooth3d(las, 0.05, ncpu = lidR::get_lidr_threads())
 
-    cat("1 cm point decimation\n")
-    las = lidR::decimate_points(las, lidR::barycenter_per_voxel(0.01))
-
     cat("Anisotropy filtering\n")
-    las = compute_anisotropy(las, k = 80)
+    las = compute_anisotropy(las, k = 40)
     las = lidR::filter_poi(las, anisotropy > 0.9)
 
     cat("Connected component filtering\n")
