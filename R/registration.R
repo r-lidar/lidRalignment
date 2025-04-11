@@ -91,7 +91,7 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
 
 
   n = lidR::get_lidr_threads()
-  groups <- cut(seq(1, nrow(param_grid)), breaks = n*4, labels = FALSE)
+  groups <- cut(seq(1, nrow(param_grid)), breaks = n*8, labels = FALSE)
   param_grid <- split(param_grid, groups)
 
   results <- pbapply::pblapply(param_grid, function(x, vref, umov)
@@ -117,15 +117,6 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
                 ylab = 'Translation X',
                 zlab = 'RMS')
     rgl::spheres3d(best_params$angle*180/pi, best_params$dx, best_params$rms, radius = 3, col = "black")
-
-    color_vector = results$dy
-    col_index <- as.integer(100 * (color_vector - min(color_vector)) / (max(color_vector) - min(color_vector)))
-    rgl::open3d()
-    rgl::plot3d(results$angle*180/pi, results$dy, results$rms,
-                xlab = 'Angle',
-                ylab = 'Translation Y',
-                zlab = 'RMS')
-    rgl::spheres3d(best_params$angle*180/pi, best_params$dy, best_params$rms, radius = 3, col = "black")
   }
 
   a = best_params$angle*180/pi
@@ -156,22 +147,12 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
     color_vector = results$dy
     col_index <- as.integer(100 * (color_vector - min(color_vector)) / (max(color_vector) - min(color_vector)))
 
-    rgl::open3d()
-    rgl::plot3d(results$angle*180/pi, results$dx, results$rms,
+    rgl::points3d(results$angle*180/pi, results$dx, results$rms,
                 col = col_gradient[col_index],
                 xlab = 'Angle',
                 ylab = 'Translation X',
                 zlab = 'RMS')
-    rgl::spheres3d(best_params$angle*180/pi, best_params$dx, best_params$rms, radius = 0.1, col = "black")
-
-    color_vector = results$dy
-    col_index <- as.integer(100 * (color_vector - min(color_vector)) / (max(color_vector) - min(color_vector)))
-    rgl::open3d()
-    rgl::plot3d(results$angle*180/pi, results$dy, results$rms,
-                xlab = 'Angle',
-                ylab = 'Translation Y',
-                zlab = 'RMS')
-    rgl::spheres3d(best_params$angle*180/pi, best_params$dy, best_params$rms, radius = 0.1, col = "black")
+    rgl::spheres3d(best_params$angle*180/pi, best_params$dx, best_params$rms, radius = 3, col = "blue")
   }
 
   M = rotation_matrix(best_params$angle*180/pi)
