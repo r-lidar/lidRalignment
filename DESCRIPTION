@@ -3,7 +3,7 @@ Type: Package
 Title: ALS MLS and TLS forest plot alignment
 Version: 1.0
 Authors@R: person("Jean-Romain", "Roussel", role = c("aut", "cre"), email = "info@r-lidar.com")
-Description: Alignment of forest plot with different strateies to align ALS with MLS/TLS or MLS with TLS even in complexe cases with major misalignments.
+Description: Alignment of forest plots point clouds (ALS, ULS, MLS, TLS), including complex cases with significant misalignments.
 License: GPL (>= 2)
 Depends:
     R (>= 4.0.0)
@@ -19,7 +19,8 @@ Imports:
     rgl,
     grDevices,
     methods,
-    Rcpp
+    Rcpp,
+    R6
 Remotes:
     r-lidar/lasR
 RoxygenNote: 7.3.2
@@ -28,3 +29,14 @@ LinkingTo:
     Rcpp,
     RcppProgress,
     lidR
+Collate: 
+    'cloudcompare.R'
+    'R6Class.R'
+    'RcppExports.R'
+    'extract_features.R'
+    'matrix_operations.R'
+    'overlap.R'
+    'plot.R'
+    'registration.R'
+    'tools_os.R'
+    'zzz.R'

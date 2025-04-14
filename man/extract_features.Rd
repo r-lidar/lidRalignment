@@ -4,12 +4,14 @@
 \alias{extract_features}
 \title{Extract Features from a LiDAR Point Cloud}
 \usage{
-extract_features(las, strategy = "chm-dtm")
+extract_features(las, strategy = "chm-dtm", verbose = TRUE)
 }
 \arguments{
 \item{las}{A \code{LAS} object containing the LiDAR point cloud data.}
 
 \item{strategy}{Character. The extraction strategy to use. \code{"chm-dtm"} or \code{"mls-tls"}. See details.}
+
+\item{verbose}{logical.}
 }
 \value{
 A \code{LAS} object containing the extracted features.
@@ -22,7 +24,7 @@ retain points that are likely matching in order to perform a registration of the
 \itemize{
 \item The \code{"chm-dtm"} strategy extracts a digital terrain model (DTM) and a canopy height model (CHM),
 and merges them into a new \code{LAS} object.
-\item The \code{"mls-tls"} strategy applies a series of filtering and processing steps including noise removal,
+\item The \code{"trunks"} strategy applies a series of filtering and processing steps including noise removal,
 smoothing, decimation, anisotropy filtering, and connected component filtering in order to extract
 trees in the first 4 meters of the point clouds
 }

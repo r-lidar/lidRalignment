@@ -5,6 +5,7 @@
 #'
 #' @param las A `LAS` object containing the LiDAR point cloud data.
 #' @param strategy Character. The extraction strategy to use. `"chm-dtm"` or `"mls-tls"`. See details.
+#' @param verbose logical.
 #' @return A `LAS` object containing the extracted features.
 #'
 #' @details
@@ -15,7 +16,7 @@
 #'   trees in the first 4 meters of the point clouds
 #' @export
 #' @md
-extract_features = function(las, strategy = "chm-dtm")
+extract_features = function(las, strategy = "chm-dtm", verbose = TRUE)
 {
   .N <- N <- hag <- anisotropy <- clusterID <- NULL
 
@@ -23,10 +24,10 @@ extract_features = function(las, strategy = "chm-dtm")
 
   if (strategy == "chm-dtm")
   {
-    cat("Digital Terrain Model\n")
+    if(verbose) cat(" Computing Digital Terrain Model...\n")
     dtm = lidR::rasterize_terrain(las, res = 0.5)
 
-    cat("Canopy Heigh Model\n")
+    if(verbose) cat(" Conputing Canopy Heigh Model...\n")
     chm = lidR::rasterize_canopy(las, 0.25)
 
     dtm_points = terra::as.data.frame(dtm, xy = TRUE)
@@ -48,30 +49,30 @@ extract_features = function(las, strategy = "chm-dtm")
     #las = readLAS("~/Téléchargements/las_ref.las")
     #las = readLAS("~/Téléchargements/las_mov.las")
 
-    cat("Digital Terrain Model\n")
+    if(verbose) cat("  Computing Digital Terrain Model...\n")
     dtm = lidR::rasterize_terrain(las, res = 0.1)
     las = lidR::height_above_ground(las, dtm = dtm, algorithm = lidR::tin())
 
-    cat("Slice between 0.15 and 3 m\n")
+    if(verbose) cat("  Slicing between 0.15 and 3 m...\n")
     las = lidR::filter_poi(las, hag > 0.15, hag < 3)
 
-    cat("3 cm point decimation\n")
+    if(verbose) cat("  Decimating with 3 cm resolution...\n")
     vox = lidR:::C_voxel_id(las, 0.03)
     vox = duplicated(vox)
     las = las[!vox]
 
-    cat("3D  Smoothing\n")
+    if(verbose) cat("  Smoothing 3D...\n")
     las = smooth3d(las, 0.05, ncpu = lidR::get_lidr_threads())
 
-    cat("Anisotropy filtering\n")
+    if(verbose) cat("  Filtering anisotropic features\n")
     las = compute_anisotropy(las, k = 40)
     las = lidR::filter_poi(las, anisotropy > 0.9)
 
-    cat("Connected component filtering\n")
+    if(verbose) cat("  Comuting connected component...\n")
     las = lidR::connected_components(las, 0.05, 100)
     las = lidR::filter_poi(las, clusterID > 0)
 
-    cat("Keep 50 most important objects\n")
+    if(verbose) cat("  Keeping only 50 most important objects...\n")
     cluster_size = las@data[, .N, by = clusterID]
     data.table::setorder(cluster_size, -N)
 

@@ -11,6 +11,7 @@ icp(
   overlap = 90,
   rot = "Z",
   skip_txy = FALSE,
+  skip_tz = FALSE,
   cc = find_cloudcompare(),
   verbose = TRUE
 )
@@ -26,7 +27,7 @@ icp(
 
 \item{rot}{Character. 'XYZ' or 'X' or 'Y' or 'Z' or 'NONE' to constrain the rotation around a given axis}
 
-\item{skip_txy}{Logical. Block XY translation.
+\item{skip_txy, skip_tz}{Logical. Block XY or Z translations.
 (or no rotation at all)}
 
 \item{cc}{Character. The path to the CloudCompare executable}

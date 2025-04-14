@@ -17,8 +17,6 @@
 #' @details The function performs coarse registration by evaluating transformations over a large parameter grid,
 #' followed by a fine registration step with a refined grid. RMS error is used to assess the alignment quality.
 #' Optionally, debug visualizations can be displayed using `rgl`.
-#'
-#' @examples
 #' @export
 brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbose = TRUE, ...)
 {
@@ -81,8 +79,8 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
 
   if (!is.null(strategy) && strategy == "chm-dtm")
   {
-    dtm_ref = pixel_metrics(ref, ~min(Z), 1)
-    dtm_mov = pixel_metrics(mov, ~min(Z), 1)
+    dtm_ref = lidR::pixel_metrics(ref, ~min(Z), 1)
+    dtm_mov = lidR::pixel_metrics(mov, ~min(Z), 1)
 
     Z0 = terra::extract(dtm_mov, cbind(0,0))$V1
     Z = terra::extract(dtm_ref, param_grid[,2:3])$V1
@@ -104,7 +102,7 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
 
   rmsi = results$rms[1]
 
-  if (!is.null(p$debug))
+  if (isTRUE(p$debug))
   {
     col_gradient <- grDevices::colorRampPalette(c("blue", "green", "yellow", "red"))(100)
     color_vector = results$dy
@@ -141,7 +139,7 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
   best_params <- results[which.min(results$rms),]
 
 
-  if (!is.null(p$debug))
+  if (isTRUE(p$debug))
   {
     col_gradient <- grDevices::colorRampPalette(c("blue", "green", "yellow", "red"))(100)
     color_vector = results$dy
@@ -178,7 +176,7 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
 #' @param min_error_diff Numeric. The minimum error difference for the ICP algorithm to terminate (default: 1e-5).
 #' @param overlap Numeric. to specify the percentage of (final) overlap (integer number between 10 and 100 - default = 100)
 #' @param rot Character. 'XYZ' or 'X' or 'Y' or 'Z' or 'NONE' to constrain the rotation around a given axis
-#' @param skip_txy Logical. Block XY translation.
+#' @param skip_txy,skip_tz Logical. Block XY or Z translations.
 #' (or no rotation at all)
 #' @param cc Character. The path to the CloudCompare executable
 #' @param verbose logical
@@ -226,43 +224,6 @@ icp = function(vref, umov, min_error_diff = 1e-5, overlap = 90, rot = "Z", skip_
   if (verbose) rtm_info(M)
 
   return(M)
-}
-
-#' Find CloudCompare executable path
-#'
-#' This function attempts to locate the CloudCompare executable based on the operating system.
-#' On Windows, it queries the registry to find the installation path. On macOS and Linux (Flathub version),
-#' it returns an error.
-#'
-#' @return A character string with the path to the CloudCompare executable.
-#' @export
-find_cloudcompare = function()
-{
-  if (Sys.info()["nodename"] == "FFGG-1009803")
-  {
-    return("/home/jr/Logiciels/CloudCompare/build/qCC/CloudCompare")
-  }
-
-  os = get_os()
-
-  if (os == "linux")
-  {
-    stop("The Linux version of CloudCompare is a Flathub package and cannot be called from the command line. Please provide the path to a compiled version of CloudCompare.")
-  }
-
-  if (os == "windows")
-  {
-    path = "C:/Program Files/CloudCompare/CloudCompare.exe"
-    if (!file.exists(path)) stop(paste("Cannot find CloudCompare in", path))
-    path = "\"C:/Program Files/CloudCompare/CloudCompare.exe\""
-    return(path)
-  }
-  if (os == "osx")
-  {
-    stop("Finding CloudCompare on macOS is not yet supported. Please provide the path to CloudCompare.")
-  }
-
-  stop("OS not detected")
 }
 
 #' Compare the Alignment of Two Point Clouds
