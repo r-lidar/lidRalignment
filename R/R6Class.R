@@ -36,7 +36,7 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
     prepare_done = FALSE,
     coarse_done = FALSE,
     fine_done = FALSE,
-    finer_done = FALSE,
+    extra_done = FALSE,
 
     verbose = TRUE,
 
@@ -127,7 +127,7 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       else
         cat(" 3. fine alignment: waiting\n")
 
-      if (self$extra_fine_done)
+      if (self$extra_fine)
         cat(" 4. extra fine alignment: done\n")
       else
         cat(" 4. extra fine alignment: waiting\n")
@@ -283,7 +283,7 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       if (!self$ref_is_ground_based | !self$mov_is_ground_based)
       {
         message("extra_fine_align() applies only on two ground-based point clouds")
-        self$extra_fine_done = TRUE
+        self$extra_done = TRUE
         return(invisible())
       }
 
@@ -326,6 +326,10 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       which = match.arg(which, c("raw", "coarse", "fine", "extra"))
       compare_to = match.arg(compare_to, c("raw", "coarse", "fine", "extra"))
 
+      if (which == "coarse" & !self$coarse_done) stop("Corse alignment not performed yet")
+      if (which == "fine" & !self$fine_done) stop("Fine alignment not performed yet")
+      if (which == "extra" & !self$extra_done) stop("Extra fine alignment not performed yet")
+
       if (compare_to != which)
       {
         M = diag(4)
@@ -357,7 +361,7 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
     #' of registration performed
     get_registration_matrix = function()
     {
-      M = combine_transformations(self$Mlocal, self$M0, self$M1, self$Mz, self$Mex, self$Mglobal)
+      M = combine_transformations(self$Mlocal, self$M0, self$M1, self$Mz, self$Mex, solve(self$Mglobal))
       return(M)
     }
   ))
