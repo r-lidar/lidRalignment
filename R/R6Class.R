@@ -213,8 +213,8 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
 
       # We cannot align using all points; we need to extract alignable features.
       cat("Extracting features to align...\n")
-      chmdtm_ref = extract_features(full_ref, strategy = "chm-dtm", verbose = verbose)
-      chmdtm_mov = extract_features(full_mov, strategy = "chm-dtm", verbose = verbose)
+      chmdtm_ref = extract_features(full_ref, strategy = "chm-dtm", verbose = self$verbose)
+      chmdtm_mov = extract_features(full_mov, strategy = "chm-dtm", verbose = self$verbose)
 
       # Translate the point clouds to center them at (0,0,0) regardless of the original coordinate system.
       chmdtm_ref = translate_las(chmdtm_ref, -global_shift_x, -global_shift_y, -global_shift_z)
