@@ -6,7 +6,8 @@ fmov = "mls_file.las"
 
 # Setup the point clouds to align
 alignment = AlignmentScene$new(fref, fmov)
-alignment$set_ref_is_ground_based(TRUE)
+alignment$set_ref_is_ground_based(FALSE)
+alignment$set_mov_is_ground_based(TRUE)
 
 alignment$prepare()
 alignment$plot("raw")
@@ -17,8 +18,8 @@ alignment$plot("coarse")
 alignment$fine_align()
 alignment$plot("fine")
 
-alignment$finer_align()
-alignment$plot("finer", compare_to = "fine")
+alignment$extra_fine_align()
+alignment$plot("extra", compare_to = "fine")
 
 M = alignment$get_registration_matrix()
 M
