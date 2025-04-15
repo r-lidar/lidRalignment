@@ -38,5 +38,4 @@ Collate:
     'overlap.R'
     'plot.R'
     'registration.R'
-    'tools_os.R'
     'zzz.R'
