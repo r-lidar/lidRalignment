@@ -8,7 +8,8 @@
 #' @export
 #' @include cloudcompare.R
 AlignmentScene <- R6::R6Class("AlignmentScene",
-  private = list(
+  public = list(
+
     cc = find_cloudcompare(),
 
     fref = NULL,
@@ -37,10 +38,7 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
     fine_done = FALSE,
     finer_done = FALSE,
 
-    verbose = TRUE
-  ),
-
-  public = list(
+    verbose = TRUE,
 
     #' @description
     #' Create a new AlignmentScene object.
