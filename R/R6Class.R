@@ -283,7 +283,7 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       if (!self$ref_is_ground_based | !self$mov_is_ground_based)
       {
         message("extra_fine_align() applies only on two ground-based point clouds")
-        self$extra_done = TRUE
+        self$extra_done = FALSE
         return(invisible())
       }
 
