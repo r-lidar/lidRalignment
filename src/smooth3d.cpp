@@ -28,7 +28,7 @@ DataFrame cpp_smooth3d(S4 las, NumericVector radius, NumericVector weight, int n
   if (radius.size() != X.size()) stop("Invadid size for radius");
 
   // Initialize the progress bar
-  Progress pb(npoints, true);
+  Progress pb(npoints, pgbar);
 
   bool abort = false;
 

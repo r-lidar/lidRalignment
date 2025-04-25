@@ -71,6 +71,13 @@ translate_las <- function(las, tx = 0, ty = 0, tz = 0)
   las@data$X <- las@data$X + tx
   las@data$Y <- las@data$Y + ty
   las@data$Z <- las@data$Z + tz
+  h = lidR::header(las)
+  h[["X offset"]] = ceiling(min(las$X))
+  h[["Y offset"]] = ceiling(min(las$Y))
+  h[["Z offset"]] = ceiling(min(las$Z))
+  lidR::quantize(las@data[["X"]], h[["X scale factor"]], h[["X offset"]])
+  lidR::quantize(las@data[["Y"]], h[["Y scale factor"]], h[["Y offset"]])
+  lidR::quantize(las@data[["Z"]], h[["Z scale factor"]], h[["Z offset"]])
   return(lidR::las_update(las))
 }
 

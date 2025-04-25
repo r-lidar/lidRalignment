@@ -212,8 +212,9 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       center_z = min(lidR::filter_ground(full_mov)$Z)
 
       # We cannot align using all points; we need to extract alignable features.
-      cat("Extracting features to align...\n")
+      cat("Extracting features to align from reference point cloud...\n")
       chmdtm_ref = extract_features(full_ref, strategy = "chm-dtm", verbose = self$verbose)
+      cat("Extracting features to align from moving point cloud...\n")
       chmdtm_mov = extract_features(full_mov, strategy = "chm-dtm", verbose = self$verbose)
 
       # Translate the point clouds to center them at (0,0,0) regardless of the original coordinate system.
@@ -254,7 +255,7 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       if (!self$coarse_done)
         stop("fine_align() must be called after coarse_align()")
 
-      if(self$verbose) cat("ICP fine alignment\n")
+      if(self$verbose) cat("  Iterative closest point fine alignment\n")
 
       mov2 = transform_las(self$chmdtm_mov, self$M0)
 
@@ -263,7 +264,7 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
 
       M = combine_transformations(self$M0, self$M1)
 
-      if(self$verbose) cat("ICP fine Z alignment\n")
+      if(self$verbose) cat("  Iterative closest point fine Z alignment\n")
 
       ref_gnd = lidR::filter_ground(self$chmdtm_ref)
       mov_gnd = lidR::filter_ground(self$chmdtm_mov)
@@ -289,7 +290,9 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
 
       M = combine_transformations(self$M0, self$M1, self$Mz)
 
+      cat("Extracting features to align from reference point cloud...\n")
       trunks_ref = extract_features(self$full_ref, strategy = "trunks")
+      cat("Extracting features to align from moving point cloud...\n")
       trunks_mov = extract_features(self$full_mov, strategy = "trunks")
 
       trunks_ref = transform_las(trunks_ref, self$Mglobal)
@@ -298,9 +301,11 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       mov2 = transform_las(trunks_mov, M)
       overlap = adjust_overlap(30, self$radius, M)
 
+      cat("  Iterative closest point extra fine alignment...")
       self$Mex = icp(trunks_ref, mov2, overlap = overlap, cc = self$cc, verbose = FALSE)
       self$trunks_ref = trunks_ref
       self$trunks_mov = trunks_mov
+      self$extra_done = TRUE
     },
 
     #' @description
@@ -311,10 +316,14 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
     align = function(res = 2, max_offset = 8)
     {
       self$prepare()
+      cat("Coarse alignment...\n")
       self$coarse_align(res, max_offset)
+      cat("Fine alignment...\n")
       self$fine_align()
       if (self$ref_is_ground_based & self$mov_is_ground_based)
         self$extra_fine_align()
+
+      cat("Alignment completed!")
     },
 
     #' @description

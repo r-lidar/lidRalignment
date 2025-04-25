@@ -25,7 +25,7 @@ extract_features = function(las, strategy = "chm-dtm", verbose = TRUE)
   if (strategy == "chm-dtm")
   {
     if(verbose) cat(" Computing Digital Terrain Model...\n")
-    dtm = lidR::rasterize_terrain(las, res = 0.5)
+    dtm = suppressMessages(lidR::rasterize_terrain(las, res = 0.5))
 
     if(verbose) cat(" Conputing Canopy Heigh Model...\n")
     chm = lidR::rasterize_canopy(las, 0.25)
@@ -37,8 +37,15 @@ extract_features = function(las, strategy = "chm-dtm", verbose = TRUE)
     points = rbind(dtm_points, chm_points)
     names(points) = c('X', 'Y', 'Z', "Classification")
 
-    header = rlas::header_create(points)
-    res = lidR::LAS(points, header)
+    h = rlas::header_create(points)
+    h[["X offset"]] = ceiling(min(las$X))
+    h[["Y offset"]] = ceiling(min(las$Y))
+    h[["Z offset"]] = ceiling(min(las$Z))
+    lidR::quantize(points[["X"]], h[["X scale factor"]], h[["X offset"]])
+    lidR::quantize(points[["Y"]], h[["Y scale factor"]], h[["Y offset"]])
+    lidR::quantize(points[["Z"]], h[["Z scale factor"]], h[["Z offset"]])
+
+    res = lidR::LAS(points, h)
     lidR::st_crs(res) = lidR::st_crs(las)
     attr(res, "strategy") = "chm-dtm"
     return(res)
@@ -50,7 +57,7 @@ extract_features = function(las, strategy = "chm-dtm", verbose = TRUE)
     #las = readLAS("~/Téléchargements/las_mov.las")
 
     if(verbose) cat("  Computing Digital Terrain Model...\n")
-    dtm = lidR::rasterize_terrain(las, res = 0.1)
+    dtm = suppressMessages(lidR::rasterize_terrain(las, res = 0.1))
     las = lidR::height_above_ground(las, dtm = dtm, algorithm = lidR::tin())
 
     if(verbose) cat("  Slicing between 0.15 and 3 m...\n")
@@ -62,10 +69,10 @@ extract_features = function(las, strategy = "chm-dtm", verbose = TRUE)
     las = las[!vox]
 
     if(verbose) cat("  Smoothing 3D...\n")
-    las = smooth3d(las, 0.05, ncpu = lidR::get_lidr_threads())
+    las = smooth3d(las, 0.05, ncpu = lidR::get_lidr_threads(), progress = FALSE)
 
     if(verbose) cat("  Filtering anisotropic features\n")
-    las = compute_anisotropy(las, k = 40)
+    las = compute_anisotropy(las, k = 20)
     las = lidR::filter_poi(las, anisotropy > 0.9)
 
     if(verbose) cat("  Comuting connected component...\n")
@@ -82,13 +89,14 @@ extract_features = function(las, strategy = "chm-dtm", verbose = TRUE)
       las = lidR::filter_poi(las, clusterID %in% cluster_size$clusterID)
     }
 
+    las = remove_lasattribute(las, "hag")
+    las = remove_lasattribute(las, "anisotropy")
+    las = remove_lasattribute(las, "clusterID")
+
     #dtm_points = terra::as.data.frame(dtm, xy = TRUE)
     #names(dtm_points) = c('X', 'Y', 'Z')
-
     #points = las@data[, .(X,Y,Z)]
-
     #las = LAS(rbind(points, dtm_points))
-
     #plot(las, color = "anisotropy", breaks = "quantile", legend = T)
 
     return(las)
@@ -116,11 +124,12 @@ smooth3d = function(las, radius = 0.05, weight = NULL, ncpu = 8, progress = TRUE
   z = cpp_smooth3d(las, radius = radius, weight = weight, ncpu = ncpu, progress, FALSE)
 
   tf = Sys.time()
-  print(difftime(tf,ti))
+  #print(difftime(tf,ti))
 
   las$X = z$X
   las$Y = z$Y
   las$Z = z$Z
+  las_quantize(las)
   las
 }
 
