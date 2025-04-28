@@ -4,30 +4,87 @@
 #include <cmath>
 #include "nanoflann.hpp"
 
-// Simple KD-tree wrapper for nanoflann
+#include <vector>
+#include <limits>
+
+constexpr float INF = std::numeric_limits<float>::max();
+
+struct Vec3
+{
+  float x, y, z;
+};
+
+struct BoundingBox
+{
+  Vec3 low;
+  Vec3 high;
+};
+
 struct PointCloud
 {
-  const float* data;
-  size_t n_pts;
+  std::vector<Vec3> points;
+  BoundingBox bbox;
 
-  inline size_t kdtree_get_point_count() const { return n_pts; }
+  PointCloud(const std::vector<Vec3>& pts) : points(pts)
+  {
+    compute_bbox();
+  }
+
+  void compute_bbox()
+  {
+    if (points.empty())
+    {
+      bbox.low  = {0, 0, 0};
+      bbox.high = {0, 0, 0};
+      return;
+    }
+
+    bbox.low  = {INF, INF, INF};
+    bbox.high = { -INF, INF, -INF};
+
+    for (const auto& p : points)
+    {
+      if (p.x < bbox.low.x)  bbox.low.x = p.x;
+      if (p.x > bbox.high.x) bbox.high.x = p.x;
+
+      if (p.y < bbox.low.y)  bbox.low.y = p.y;
+      if (p.y > bbox.high.y) bbox.high.y = p.y;
+
+      if (p.z < bbox.low.z)  bbox.low.z = p.z;
+      if (p.z > bbox.high.z) bbox.high.z = p.z;
+    }
+  }
+
+  inline size_t kdtree_get_point_count() const { return points.size(); }
+
   inline float kdtree_get_pt(const size_t idx, const size_t dim) const
   {
-    return data[idx * 3 + dim];
+    const float* ptr = &points[idx].x;
+    return ptr[dim];
   }
-  template <class BBOX>
-  bool kdtree_get_bbox(BBOX& /*bb*/) const { return false; }
+
+  template <class BBOX> bool kdtree_get_bbox(BBOX& bb) const
+  {
+    bb[0].low  = bbox.low.x;
+    bb[0].high = bbox.high.x;
+    bb[1].low  = bbox.low.y;
+    bb[1].high = bbox.high.y;
+    bb[2].low  = bbox.low.z;
+    bb[2].high = bbox.high.z;
+    return true; // bbox is provided
+  }
 };
 
 typedef nanoflann::KDTreeSingleIndexAdaptor<nanoflann::L2_Simple_Adaptor<float, PointCloud>, PointCloud, 3> KDtree;
 
-float pseudo_rms(const KDtree& tree, const float* mov_data, size_t n_pts)
+float pseudo_rms(const KDtree& tree, const std::vector<Vec3>& mov_pts)
 {
   std::vector<float> Dsq;
+  Dsq.reserve(mov_pts.size());
 
-  for (size_t i = 0; i < n_pts; ++i)
+  for (const auto& pt : mov_pts)
   {
-    float query_pt[3] = {mov_data[i*3+0], mov_data[i*3+1], mov_data[i*3+2]};
+    float query_pt[3] = {pt.x, pt.y, pt.z};
     size_t ret_index;
     float out_dist_sqr;
     nanoflann::KNNResultSet<float> resultSet(1);
@@ -36,33 +93,31 @@ float pseudo_rms(const KDtree& tree, const float* mov_data, size_t n_pts)
     Dsq.push_back(out_dist_sqr);
   }
 
-  // Sort distances to get the best 50% (smallest distances)
   std::sort(Dsq.begin(), Dsq.end());
 
-  // Calculate RMS based on the best 50%
-  size_t half_n_pts = n_pts / 2;
+  size_t half_n_pts = mov_pts.size() / 2;
   float rms = 0.0f;
   for (size_t i = 0; i < half_n_pts; ++i)
   {
-    rms += Dsq[i]; // Use the smallest half distances
+    rms += Dsq[i];
   }
 
   return std::sqrt(rms / half_n_pts);
 }
 
-void transform(float* points, size_t n_pts, float angle, float dx, float dy, float dz)
+void transform(std::vector<Vec3>& points, float angle, float dx, float dy, float dz)
 {
   float cos_a = std::cos(angle);
   float sin_a = std::sin(angle);
 
-  for (size_t i = 0; i < n_pts; ++i)
+  for (auto& pt : points)
   {
-    float x = points[i*3+0];
-    float y = points[i*3+1];
-
-    points[i*3+0] = cos_a * x - sin_a * y + dx;
-    points[i*3+1] = sin_a * x + cos_a * y + dy;
-    points[i*3+2] += dz;
+    float x_new = cos_a * pt.x - sin_a * pt.y + dx;
+    float y_new = sin_a * pt.x + cos_a * pt.y + dy;
+    float z_new = pt.z + dz;
+    pt.x = x_new;
+    pt.y = y_new;
+    pt.z = z_new;
   }
 }
 
@@ -73,29 +128,27 @@ Rcpp::DataFrame rms_scan_grid(Rcpp::NumericMatrix ref, Rcpp::NumericMatrix mov, 
   const size_t nmov = mov.nrow();
   const size_t np = param_grid.nrow();
 
-  const size_t ref_ncol = ref.ncol();
-  const size_t mov_ncol = mov.ncol();
-
-  std::vector<float> ref_pts;
-  ref_pts.reserve(nref * ref_ncol);
-
-  for (size_t i = 0; i < nref; ++i) {
-    for (size_t j = 0; j < ref_ncol; ++j) {
-      ref_pts.push_back(static_cast<float>(ref(i, j)));
-    }
+  std::vector<Vec3> ref_pts(nref);
+  for (size_t i = 0; i < nref; ++i)
+  {
+    ref_pts[i] = Vec3{
+      static_cast<float>(ref(i, 0)),
+      static_cast<float>(ref(i, 1)),
+      static_cast<float>(ref(i, 2))
+    };
   }
 
-  std::vector<float> mov_pts;
-  mov_pts.reserve(nmov * mov_ncol);
-
-  for (size_t i = 0; i < nmov; ++i) {
-    for (size_t j = 0; j < mov_ncol; ++j) {
-      mov_pts.push_back(static_cast<float>(mov(i, j)));
-    }
+  std::vector<Vec3> mov_pts(nmov);
+  for (size_t i = 0; i < nmov; ++i)
+  {
+    mov_pts[i] = Vec3{
+      static_cast<float>(mov(i, 0)),
+      static_cast<float>(mov(i, 1)),
+      static_cast<float>(mov(i, 2))
+    };
   }
 
-  // Build the KDTree
-  PointCloud ref_cloud{ref_pts.data(), nref};
+  PointCloud ref_cloud{ref_pts};
   KDtree tree(3, ref_cloud, nanoflann::KDTreeSingleIndexAdaptorParams(10));
   tree.buildIndex();
 
@@ -110,23 +163,18 @@ Rcpp::DataFrame rms_scan_grid(Rcpp::NumericMatrix ref, Rcpp::NumericMatrix mov, 
     float dz    = param_grid(i, 3);
 
     // Copy and transform
-    std::vector<float> temp_pts(mov_pts);
+    std::vector<Vec3> temp_pts = mov_pts;
+    transform(temp_pts, angle, dx, dy, dz);
 
-    // Transform points once
-    transform(temp_pts.data(), nmov, angle, dx, dy, dz);
-
-    // Compute the RMS based on nearest neighbors
-    float rms = pseudo_rms(tree, temp_pts.data(), nmov);
+    // Compute RMS
+    float rms = pseudo_rms(tree, temp_pts);
 
     // Store results
     angles[i] = angle;
     dxs[i] = dx;
     dys[i] = dy;
     dzs[i] = dz;
-    rmss[i] = rms;  // Since we only computed one RMS value per grid
-
-    // Optional: Debugging output every 1000 steps
-    // if (i % 1000 == 0) printf("%d/%d\n", i, (int)np);
+    rmss[i] = rms;
   }
 
   return Rcpp::DataFrame::create(
