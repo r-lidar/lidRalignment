@@ -89,9 +89,9 @@ extract_features = function(las, strategy = "chm-dtm", verbose = TRUE)
       las = lidR::filter_poi(las, clusterID %in% cluster_size$clusterID)
     }
 
-    las = remove_lasattribute(las, "hag")
-    las = remove_lasattribute(las, "anisotropy")
-    las = remove_lasattribute(las, "clusterID")
+    las = lidR::remove_lasattribute(las, "hag")
+    las = lidR::remove_lasattribute(las, "anisotropy")
+    las = lidR::remove_lasattribute(las, "clusterID")
 
     #dtm_points = terra::as.data.frame(dtm, xy = TRUE)
     #names(dtm_points) = c('X', 'Y', 'Z')
@@ -129,7 +129,7 @@ smooth3d = function(las, radius = 0.05, weight = NULL, ncpu = 8, progress = TRUE
   las$X = z$X
   las$Y = z$Y
   las$Z = z$Z
-  las_quantize(las)
+  lidR::las_quantize(las)
   las
 }
 

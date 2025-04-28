@@ -10,6 +10,19 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// rms_scan_grid
+Rcpp::DataFrame rms_scan_grid(Rcpp::NumericMatrix ref, Rcpp::NumericMatrix mov, Rcpp::NumericMatrix param_grid);
+RcppExport SEXP _lidRalignment_rms_scan_grid(SEXP refSEXP, SEXP movSEXP, SEXP param_gridSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type ref(refSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type mov(movSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type param_grid(param_gridSEXP);
+    rcpp_result_gen = Rcpp::wrap(rms_scan_grid(ref, mov, param_grid));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_smooth3d
 DataFrame cpp_smooth3d(S4 las, NumericVector radius, NumericVector weight, int ncpu, bool pgbar, bool verbose);
 RcppExport SEXP _lidRalignment_cpp_smooth3d(SEXP lasSEXP, SEXP radiusSEXP, SEXP weightSEXP, SEXP ncpuSEXP, SEXP pgbarSEXP, SEXP verboseSEXP) {
@@ -28,6 +41,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_lidRalignment_rms_scan_grid", (DL_FUNC) &_lidRalignment_rms_scan_grid, 3},
     {"_lidRalignment_cpp_smooth3d", (DL_FUNC) &_lidRalignment_cpp_smooth3d, 6},
     {NULL, NULL, 0}
 };

@@ -33,40 +33,8 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
   else
     strategy = strategy_ref
 
-  rotate_z <- function(pc, angle)
-  {
-    rotation_matrix <- matrix(c(cos(angle), -sin(angle), 0,
-                                sin(angle), cos(angle), 0,
-                                0, 0, 1), nrow = 3, byrow = TRUE)
-    t(rotation_matrix %*% t(pc))
-  }
-
-  translate_xyz <- function(pc, dx, dy, dz)
-  {
-    pc + matrix(c(dx, dy, dz), nrow = nrow(pc), ncol = 3, byrow = TRUE)
-  }
-
-  compute_rms <- function(params, vref, umov)
-  {
-    angle <- params["angle"]
-    dx <- params["dx"]
-    dy <- params["dy"]
-    dz <- params["dz"]
-
-    rotated <- rotate_z(umov, angle)
-    translated <- translate_xyz(rotated, dx, dy, dz)
-
-    #rgl::plot3d(vref, col = "blue")
-    #rgl::points3d(translated, col = "red")
-
-    rms_val <- compare_alignment(vref, translated)
-
-    list(angle = angle, dx = dx, dy = dy, dz = dz, rms = rms_val)
-  }
-
   vref = as.matrix(sf::st_coordinates(lidR::decimate_points(ref, lidR::random_per_voxel(res))))
   umov = as.matrix(sf::st_coordinates(lidR::decimate_points(mov, lidR::random_per_voxel(res))))
-
 
   #x = plot(decimate_points(ref, random_per_voxel(res)), pal = "yellow", size = 2)
   #plot(decimate_points(mov, random_per_voxel(res)), add = x, pal = "red", size = 2)
@@ -87,17 +55,9 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
     param_grid$dz = Z-Z0
   }
 
+  param_grid <- as.matrix(param_grid)
 
-  n = lidR::get_lidr_threads()
-  groups <- cut(seq(1, nrow(param_grid)), breaks = n*8, labels = FALSE)
-  param_grid <- split(param_grid, groups)
-
-  results <- pbapply::pblapply(param_grid, function(x, vref, umov)
-  {
-    ans = apply(x, 1, compute_rms, vref = vref, umov = umov)
-    ans = data.table::rbindlist(ans)
-  }, vref = vref, umov = umov, cl = n)
-  results <- data.table::rbindlist(results)
+  results = rms_scan_grid(vref, umov, param_grid)
   best_params <- results[which.min(results$rms),]
 
   rmsi = results$rms[1]
@@ -125,17 +85,9 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
   dy <- seq(best_params$dy-1, best_params$dy+1, by = .25)
   dz <- seq(best_params$dz-0.5, best_params$dz+0.5, by = 0.1)
   param_grid <- expand.grid(angle = angles, dx = dx, dy = dy, dz = dz)
+  param_grid <- as.matrix(param_grid)
 
-  n = lidR::get_lidr_threads()
-  groups <- cut(seq(1, nrow(param_grid)), breaks = n*4, labels = FALSE)
-  param_grid <- split(param_grid, groups)
-
-  results <- pbapply::pblapply(param_grid, function(x, vref, umov)
-  {
-    ans = apply(x, 1, compute_rms, vref = vref, umov = umov)
-    ans = data.table::rbindlist(ans)
-  }, vref = vref, umov = umov, cl = n)
-  results <- data.table::rbindlist(results)
+  results = rms_scan_grid(vref, umov, param_grid)
   best_params <- results[which.min(results$rms),]
 
 
@@ -225,27 +177,4 @@ icp = function(vref, umov, min_error_diff = 1e-5, overlap = 90, rot = "Z", skip_
 
   return(M)
 }
-
-#' Compare the Alignment of Two Point Clouds
-#'
-#' Computes the root mean square error (RMSE) of the nearest neighbor distances between two point clouds.
-#' This function measures how well `pc2` aligns with `pc1` by finding the closest points in `pc1` for
-#' each point in `pc2` and computing the RMSE for half of the point cloud. It uses the 50% of the
-#' most aligned points to account for non-overlapping features. Thus, the returned value is not
-#' a true RMSE but rather an arbitrary alignment score.
-#'
-#' @param pc1 A matrix of XYZ coordinates or a `LAS` object from the `lidR` package.
-#' @param pc2 A matrix of XYZ coordinates or a `LAS` object from the `lidR` package.
-#' @noMd
-compare_alignment <- function(pc1, pc2)
-{
-  if (methods::is(pc1, "LAS")) pc1 = as.matrix(sf::st_coordinates(pc1))
-  if (methods::is(pc2, "LAS")) pc2 = as.matrix(sf::st_coordinates(pc2))
-  K = RANN::nn2(pc1, pc2, k = 1)
-  D = K$nn.dists
-  D = sort(as.numeric(D))
-  n = length(D)/2
-  sqrt(mean(D[1:n]^2))
-}
-
 
