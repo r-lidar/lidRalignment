@@ -5,6 +5,10 @@ rms_scan_grid <- function(ref, mov, param_grid) {
     .Call(`_lidRalignment_rms_scan_grid`, ref, mov, param_grid)
 }
 
+cpp_icp <- function(source_mat, target_mat, tz_only = FALSE, rz_only = TRUE, max_iterations = 100L, overlap = 100L, tolerance = 1e-5) {
+    .Call(`_lidRalignment_cpp_icp`, source_mat, target_mat, tz_only, rz_only, max_iterations, overlap, tolerance)
+}
+
 cpp_smooth3d <- function(las, radius, weight, ncpu, pgbar, verbose) {
     .Call(`_lidRalignment_cpp_smooth3d`, las, radius, weight, ncpu, pgbar, verbose)
 }

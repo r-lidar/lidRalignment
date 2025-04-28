@@ -3,7 +3,7 @@
 #' @param overlap default value
 #' @param r plot radius
 #' @param M brute force registration matrix
-#' @export
+#' @noRd
 adjust_overlap = function(overlap, r, M)
 {
   d = sqrt(sum(M[1:2,4]^2))

@@ -14,7 +14,7 @@
 #' - The `"trunks"` strategy applies a series of filtering and processing steps including noise removal,
 #'   smoothing, decimation, anisotropy filtering, and connected component filtering in order to extract
 #'   trees in the first 4 meters of the point clouds
-#' @export
+#' @noRd
 #' @md
 extract_features = function(las, strategy = "chm-dtm", verbose = TRUE)
 {

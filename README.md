@@ -27,13 +27,11 @@ You need the latest version of `lidR` and `lasR`:
 install.packages(c('lidR', 'lasR'), repos = 'https://r-lidar.r-universe.dev')
 ```
 
-Then
+Then:
 
 ```r
 remotes::install_github("r-lidar-lab/lidRalignment")
 ```
-
-The iterative closest point functions currently rely on [CloudCompare](https://www.danielgm.net/cc/). `CloudCompare` must be installed before using `lidRalignment`
 
 ## Tutorial
 
@@ -47,9 +45,6 @@ The alignment pipeline consists of four stages, progressing from raw to extra fi
 ```r
 library(lidR)
 library(lidRalignment)
-
-# Use this if find_cloudcompare() cannot find cloudcompare
-register_cloudcompare("C:/Program Files/CloudCompare/CloudCompare.exe")
 
 fref = "als_file.las"
 fmov = "mls_file.las"
@@ -76,7 +71,6 @@ M = alignment$get_registration_matrix()
 crs = sf::st_crs(readLASheader(fref))
 ofile = transform_las(fmov, M, crs)
 ```
-
 
 Rather than running the full alignment pipeline, it is possible to run it step by step.
 

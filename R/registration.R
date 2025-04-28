@@ -17,7 +17,7 @@
 #' @details The function performs coarse registration by evaluating transformations over a large parameter grid,
 #' followed by a fine registration step with a refined grid. RMS error is used to assess the alignment quality.
 #' Optionally, debug visualizations can be displayed using `rgl`.
-#' @export
+#' @noMd
 brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbose = TRUE, ...)
 {
   p = list(...)
@@ -123,8 +123,8 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
 #' This function performs point cloud registration using the CloudCompare ICP (Iterative Closest Point) algorithm.
 #' CloudCompare must be installed to use this function. You can download it from: https://www.danielgm.net/cc/.
 #'
-#' @param vref A `LAS` containing the reference point cloud
-#' @param umov A `LAS` containing the moving point cloud
+#' @param vref A `LAS` containing the reference point cloud or nx3 matrix
+#' @param umov A `LAS` containing the moving point cloud or nx3 matrix
 #' @param min_error_diff Numeric. The minimum error difference for the ICP algorithm to terminate (default: 1e-5).
 #' @param overlap Numeric. to specify the percentage of (final) overlap (integer number between 10 and 100 - default = 100)
 #' @param rot Character. 'XYZ' or 'X' or 'Y' or 'Z' or 'NONE' to constrain the rotation around a given axis
@@ -138,9 +138,9 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
 #' @details The function exports both point clouds to temporary `.xyz` files, runs CloudCompare ICP
 #' via a system call, retrieves the transformation matrix from the generated file, and then deletes
 #' temporary files.
-#' @export
 #' @md
-icp = function(vref, umov, min_error_diff = 1e-5, overlap = 90, rot = "Z", skip_txy = FALSE, skip_tz = FALSE, cc = find_cloudcompare(), verbose = TRUE)
+#' @noRd
+cc_icp = function(vref, umov, min_error_diff = 1e-5, overlap = 90, rot = "Z", skip_txy = FALSE, skip_tz = FALSE, cc = find_cloudcompare(), verbose = TRUE)
 {
   . <- X <- Y <- Z <- NULL
 
@@ -152,8 +152,13 @@ icp = function(vref, umov, min_error_diff = 1e-5, overlap = 90, rot = "Z", skip_
   ovref = paste0(tempdir(),"/vref.xyz")
   oumov = paste0(tempdir(),"/umov.xyz")
 
-  data.table::fwrite(vref@data[, .(X,Y,Z)], ovref, sep = " ", col.names = FALSE)
-  data.table::fwrite(umov@data[, .(X,Y,Z)], oumov, sep = " ", col.names = FALSE)
+  if (is.matrix(vref)) vref = data.table::as.data.table(vref)
+  if (is.matrix(umov)) umov = data.table::as.data.table(umov)
+  if (methods::is(vref, "LAS")) vref = vref@data[, .(X,Y,Z)]
+  if (methods::is(umov, "LAS")) umov = umov@data[, .(X,Y,Z)]
+
+  data.table::fwrite(vref, ovref, sep = " ", col.names = FALSE)
+  data.table::fwrite(umov, oumov, sep = " ", col.names = FALSE)
 
   skip_txy = if(skip_txy) " -SKIP_TX -SKIP_TY " else ""
   skip_tz  = if(skip_tz) " -SKIP_TZ " else ""
@@ -176,5 +181,12 @@ icp = function(vref, umov, min_error_diff = 1e-5, overlap = 90, rot = "Z", skip_
   if (verbose) rtm_info(M)
 
   return(M)
+}
+
+icp = function(vref, umov, overlap = 90, tz_only = FALSE, rz_only = TRUE, tolerance = 1e-6)
+{
+  vref = as.matrix(vref@data)
+  umov = as.matrix(umov@data)
+  cpp_icp(umov, vref, tz_only = tz_only, rz_only = rz_only, overlap = overlap, tolerance = tolerance)
 }
 

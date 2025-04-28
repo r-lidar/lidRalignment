@@ -22,7 +22,7 @@ get_os <- function()
 #' it returns an error. If the path is not found automatically use `register_cloudcompare()`
 #'
 #' @return A character string with the path to the CloudCompare executable.
-#' @export
+#' @noRd
 find_cloudcompare <- function()
 {
   if (exists("cc", envir = .ccpath_env, inherits = FALSE))

@@ -260,7 +260,8 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       mov2 = transform_las(self$chmdtm_mov, self$M0)
 
       overlap = adjust_overlap(90, self$radius, self$M0)
-      self$M1 = icp(self$chmdtm_ref, mov2, overlap = overlap, cc = self$cc, verbose = FALSE)
+      self$M1 = cc_icp(self$chmdtm_ref, mov2, overlap = overlap, cc = self$cc, verbose = FALSE)
+      #self$M1 = icp(self$chmdtm_ref, mov2, overlap = overlap)
 
       M = combine_transformations(self$M0, self$M1)
 
@@ -270,7 +271,8 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       mov_gnd = lidR::filter_ground(self$chmdtm_mov)
       mov_gnd = transform_las(mov_gnd, M)
 
-      self$Mz = icp(ref_gnd, mov_gnd, overlap = overlap, skip_txy = TRUE, rot = "NONE", cc = self$cc, verbose = FALSE)
+      self$Mz = cc_icp(ref_gnd, mov_gnd, overlap = overlap, skip_txy = TRUE, rot = "NONE", cc = self$cc, verbose = FALSE)
+      #self$Mz = icp(ref_gnd, mov_gnd, overlap = overlap, tz_only = TRUE)
       self$fine_done = TRUE
     },
 
@@ -302,7 +304,8 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       overlap = adjust_overlap(30, self$radius, M)
 
       cat("  Iterative closest point extra fine alignment...")
-      self$Mex = icp(trunks_ref, mov2, overlap = overlap, cc = self$cc, verbose = FALSE)
+      self$Mex = cc_icp(trunks_ref, mov2, overlap = overlap, cc = self$cc, verbose = FALSE)
+      #self$Mex = icp(trunks_ref, mov2, overlap = overlap)
       self$trunks_ref = trunks_ref
       self$trunks_mov = trunks_mov
       self$extra_done = TRUE

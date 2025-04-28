@@ -64,8 +64,7 @@ rotation_matrix <- function(angle, axis = "z")
 #' @param ty Translation along Y-axis (default 0).
 #' @param tz Translation along Z-axis (default 0).
 #' @return A modified LAS object.
-#' @export
-#' @md
+#' @noRd
 translate_las <- function(las, tx = 0, ty = 0, tz = 0)
 {
   las@data$X <- las@data$X + tx

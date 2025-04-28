@@ -25,6 +25,7 @@ RoxygenNote: 7.3.2
 Encoding: UTF-8
 LinkingTo: 
     Rcpp,
+    RcppEigen,
     RcppProgress,
     lidR
 Collate: 
