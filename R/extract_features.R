@@ -27,7 +27,7 @@ extract_features = function(las, strategy = "chm-dtm", verbose = TRUE)
     if(verbose) cat(" Computing Digital Terrain Model...\n")
     dtm = suppressMessages(lidR::rasterize_terrain(las, res = 0.5))
 
-    if(verbose) cat(" Conputing Canopy Heigh Model...\n")
+    if(verbose) cat(" Computing Canopy Heigh Model...\n")
     chm = lidR::rasterize_canopy(las, 0.25)
 
     dtm_points = terra::as.data.frame(dtm, xy = TRUE)
