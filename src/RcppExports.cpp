@@ -25,7 +25,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_icp
-Eigen::MatrixXd cpp_icp(Eigen::MatrixXd& source_mat, Eigen::MatrixXd& target_mat, bool tz_only, bool rz_only, int max_iterations, int overlap, double tolerance);
+Rcpp::NumericMatrix cpp_icp(Eigen::MatrixXd& source_mat, Eigen::MatrixXd& target_mat, bool tz_only, bool rz_only, int max_iterations, int overlap, double tolerance);
 RcppExport SEXP _lidRalignment_cpp_icp(SEXP source_matSEXP, SEXP target_matSEXP, SEXP tz_onlySEXP, SEXP rz_onlySEXP, SEXP max_iterationsSEXP, SEXP overlapSEXP, SEXP toleranceSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

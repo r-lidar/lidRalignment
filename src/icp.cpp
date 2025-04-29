@@ -22,7 +22,7 @@ struct PointCloudAdaptor
 using KDTree = nanoflann::KDTreeSingleIndexAdaptor<nanoflann::L2_Simple_Adaptor<double, PointCloudAdaptor>, PointCloudAdaptor, 3>;
 
 // [[Rcpp::export]]
-Eigen::MatrixXd cpp_icp(Eigen::MatrixXd& source_mat, Eigen::MatrixXd& target_mat,
+Rcpp::NumericMatrix cpp_icp(Eigen::MatrixXd& source_mat, Eigen::MatrixXd& target_mat,
                         bool tz_only = false, bool rz_only = true,
                         int max_iterations = 100, int overlap = 100, double tolerance = 1e-5)
 {
@@ -38,7 +38,9 @@ Eigen::MatrixXd cpp_icp(Eigen::MatrixXd& source_mat, Eigen::MatrixXd& target_mat
   index.buildIndex();
 
   Eigen::Matrix4d previous_T = T;
-  double previous_error = std::numeric_limits<double>::max();
+  double previous_rms = std::numeric_limits<double>::max();
+
+  double rmsi, rms;
 
   for (int iter = 0; iter < max_iterations; ++iter)
   {
@@ -121,21 +123,26 @@ Eigen::MatrixXd cpp_icp(Eigen::MatrixXd& source_mat, Eigen::MatrixXd& target_mat
       aligned[i] = (T_step.block<3,3>(0,0) * aligned[i] + T_step.block<3,1>(0,3));
     }
 
-    double total_error = 0.0;
+    rms = 0.0;
     for (size_t i = 0; i < n; ++i)
     {
-      total_error += matches[i].dist;
+      rms += matches[i].dist;
     }
-    total_error /= n;
+    rms /= n;
 
-    //Rprintf("Iteration %d : n = %lu, error %lf\n", iter, n, total_error);
+    //Rprintf("Iteration %d : n = %lu, error %lf\n", iter, n, rms);
 
-    if (std::abs(previous_error - total_error) < tolerance)
+    if (std::abs(previous_rms - rms) < tolerance)
     {
       break;
     }
-    previous_error = total_error;
+    if (iter == 0) rmsi = rms;
+    previous_rms = rms;
   }
 
-  return T;
+  Rcpp::NumericMatrix M = Rcpp::wrap(T);
+  M.attr("RMSi") = rmsi;
+  M.attr("RMSf") = rms;
+
+  return M;
 }
