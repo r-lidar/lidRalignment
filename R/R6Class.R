@@ -10,7 +10,7 @@
 AlignmentScene <- R6::R6Class("AlignmentScene",
   public = list(
 
-    cc = find_cloudcompare(),
+    #cc = find_cloudcompare(),
 
     fref = NULL,
     fmov = NULL,
