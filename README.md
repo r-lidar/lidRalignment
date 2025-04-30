@@ -1,7 +1,7 @@
 # lidRalignment
 
 ![license](https://img.shields.io/badge/Licence-GPL--3-blue.svg)
-![Lifecycle:Experimental](https://img.shields.io/badge/Lifecycle-Experimental-990000)
+![Lifecycle:Experimental](https://img.shields.io/badge/Lifecycle-Maturing-997722)
 
 ## Overview
 

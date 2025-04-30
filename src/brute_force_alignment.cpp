@@ -2,7 +2,7 @@
 #include <omp.h>
 #include <vector>
 #include <cmath>
-#include "nanoflann.hpp"
+#include "nanoflann/nanoflann.h"
 
 #include <vector>
 #include <limits>

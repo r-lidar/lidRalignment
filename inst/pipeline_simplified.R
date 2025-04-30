@@ -12,7 +12,7 @@ alignment$set_mov_is_ground_based(TRUE)
 alignment$prepare()
 alignment$plot("raw")
 
-alignment$coarse_align(res = 1, debug = T)
+alignment$coarse_align(res = 1,debug = T)
 alignment$plot("coarse")
 
 alignment$fine_align()

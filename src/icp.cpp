@@ -5,7 +5,7 @@
 #include <limits>
 #include <iostream>
 #include <numeric>
-#include "nanoflann.hpp"
+#include "nanoflann/nanoflann.h"
 
 struct PointCloudAdaptor
 {
