@@ -1,5 +1,3 @@
-// File: icp_overlap_cloudcompare.cpp
-
 #include <RcppEigen.h>
 #include <vector>
 #include <limits>
