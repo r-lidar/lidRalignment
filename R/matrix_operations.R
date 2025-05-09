@@ -6,7 +6,7 @@
 #' @param ty Translation along the Y-axis.
 #' @param tz Translation along the Z-axis.
 #' @return A 4x4 transformation matrix.
-#' @export
+#' @noRd
 translation_matrix <- function(tx, ty, tz)
 {
   matrix(c(
@@ -24,7 +24,7 @@ translation_matrix <- function(tx, ty, tz)
 #' @param angle Rotation angle in degrees.
 #' @param axis Axis of rotation ('x', 'y', or 'z').
 #' @return A 4x4 transformation matrix.
-#' @export
+#' @noRd
 rotation_matrix <- function(angle, axis = "z")
 {
   angle <- angle * pi / 180  # Convert to radians
@@ -87,17 +87,17 @@ translate_las <- function(las, tx = 0, ty = 0, tz = 0)
 #'
 #' @param las A `LAS` object or a character string representing the file path to a LAS file.
 #' @param M A 4x4 transformation matrix.
-#' @param crs Optional CRS to assign to the transformed LAS. Defaults to `sf::NA_crs_`.
+#' @param crs Optional CRS to assign to the transformed LAS. Can be the epsg code, the wkt string or a sf crs object.
 #' @return A transformed `LAS` object. If a file path is provided for `las`, a new LAS file is created and returned.
 #' @export
 #' @md
-transform_las <- function(las, M, crs = sf::NA_crs_)
+transform_las <- function(las, M, crs = NULL)
 {
   stopifnot(dim(M) == c(4, 4))
 
   if (methods::is(las, "LAS"))
   {
-    coords <- as.matrix(sf::st_coordinates(las))
+    coords <- as.matrix(las@data[, .(X,Y,Z)])
     coords <- cbind(coords, 1)
     transformed <- coords %*% t(M)
 
@@ -112,7 +112,8 @@ transform_las <- function(las, M, crs = sf::NA_crs_)
     lidR::quantize(xyz[["Z"]], h[["Z scale factor"]], h[["Z offset"]])
     las_new <- lidR::LAS(xyz, h)
 
-    lidR::st_crs(las_new) <- crs
+    if (!is.null(crs))
+      lidR::st_crs(las_new) <- crs
 
     return(las_new)
   }
