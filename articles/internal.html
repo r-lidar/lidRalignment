@@ -304,7 +304,7 @@ CHM and 0.5 m for the DTM, the total number of pixels (and thus points
 of interest) used for alignment is limited to a maximum of approximately
 25,000. This keeps the process both efficient and robust.</p>
 <div class="figure" style="text-align: left">
-<img src="chm-dtm-als.jpg" alt="CHM/DTM point clouds for the ALS (top left), MLS (top right) and TLS (bottom left). We can observe the difference of qualities between ALS, MLS and TLS. But nothing that prevent alignment. Canopy gaps, dominant tree, gaps shapes and DTM shapes are visible in all datasets." width="332px"><img src="chm-dtm-mls.jpg" alt="CHM/DTM point clouds for the ALS (top left), MLS (top right) and TLS (bottom left). We can observe the difference of qualities between ALS, MLS and TLS. But nothing that prevent alignment. Canopy gaps, dominant tree, gaps shapes and DTM shapes are visible in all datasets." width="332px"><img src="chm-dtm-tls.jpg" alt="CHM/DTM point clouds for the ALS (top left), MLS (top right) and TLS (bottom left). We can observe the difference of qualities between ALS, MLS and TLS. But nothing that prevent alignment. Canopy gaps, dominant tree, gaps shapes and DTM shapes are visible in all datasets." width="332px"><p class="caption">
+<img src="chm-dtm-als.jpg" alt="CHM/DTM point clouds for the ALS (top left), MLS (top right) and TLS (bottom left). We can observe the difference of qualities between ALS, MLS and TLS. But nothing that prevent alignment. Canopy gaps, dominant tree, gaps shapes and DTM shapes are visible in all datasets." width="47%"><img src="chm-dtm-mls.jpg" alt="CHM/DTM point clouds for the ALS (top left), MLS (top right) and TLS (bottom left). We can observe the difference of qualities between ALS, MLS and TLS. But nothing that prevent alignment. Canopy gaps, dominant tree, gaps shapes and DTM shapes are visible in all datasets." width="47%"><img src="chm-dtm-tls.jpg" alt="CHM/DTM point clouds for the ALS (top left), MLS (top right) and TLS (bottom left). We can observe the difference of qualities between ALS, MLS and TLS. But nothing that prevent alignment. Canopy gaps, dominant tree, gaps shapes and DTM shapes are visible in all datasets." width="47%"><p class="caption">
 CHM/DTM point clouds for the ALS (top left), MLS (top right) and TLS
 (bottom left). We can observe the difference of qualities between ALS,
 MLS and TLS. But nothing that prevent alignment. Canopy gaps, dominant
@@ -321,7 +321,7 @@ centroid is at the origin (0,0,0). This ensures that, regardless of
 their original coordinate systems, the two plots are numerically aligned
 in space. The transformation matrix used for this centering step is
 recorded for later use.</p>
-<p><img src="als-mls.jpg" width="332"><img src="mls-tls.jpg" width="332"></p>
+<p><img src="als-mls.jpg" style="width:47.0%"><img src="mls-tls.jpg" style="width:47.0%"></p>
 </div>
 <div class="section level2">
 <h2 id="step-3-coarse-alignment">Step 3: Coarse Alignment<a class="anchor" aria-label="anchor" href="#step-3-coarse-alignment"></a>
@@ -381,7 +381,7 @@ the initial solution:</p>
 few extra millisecond second of additional computation time. The
 transformation matrix used for this registration step is recorded for
 later use.</p>
-<p><img src="als-mls-coarse.jpg" width="332"><img src="mls-tls-coarse.jpg" width="332"></p>
+<p><img src="als-mls-coarse.jpg" style="width:47.0%"><img src="mls-tls-coarse.jpg" style="width:47.0%"></p>
 </div>
 <div class="section level2">
 <h2 id="rmse-computation">RMSE Computation<a class="anchor" aria-label="anchor" href="#rmse-computation"></a>
@@ -458,7 +458,7 @@ Adjusting the overlap to reflect the true shared region ensures
 robustness and stability of the fine alignment.</p>
 <p>The transformation matrix used for this registration step is recorded
 for later use.</p>
-<p><img src="als-mls-fine.jpg" width="332"><img src="mls-tls-coarse.jpg" width="332"></p>
+<p><img src="als-mls-fine.jpg" style="width:47.0%"><img src="mls-tls-coarse.jpg" style="width:47.0%"></p>
 </div>
 <div class="section level3">
 <h3 id="step-4-2-fine-alignment-on-the-z-axis-using-trimmed-icp">Step 4.2: Fine alignment on the Z axis using trimmed ICP<a class="anchor" aria-label="anchor" href="#step-4-2-fine-alignment-on-the-z-axis-using-trimmed-icp"></a>
@@ -540,7 +540,7 @@ assume that matching trees are systematically extracted—but some always
 are, and that’s sufficient.</p>
 <p>This step typically takes about 30 secondes of computation time.</p>
 <div class="figure" style="text-align: left">
-<img src="trunks-mls.jpg" alt="The 50 main anisotropic features extracted from each point cloud. As expected, they do not match perfectly, primarily due to the low quality of the TLS data, which suffers from significant occlusion, cast shadows and lack of scan positions (here 5 scans). Despite this, we typically have enough structure to perform a reliable alignment. In practice, even just three matching features would be sufficient for a registration in this context." width="332px"><img src="trunk-tls.jpg" alt="The 50 main anisotropic features extracted from each point cloud. As expected, they do not match perfectly, primarily due to the low quality of the TLS data, which suffers from significant occlusion, cast shadows and lack of scan positions (here 5 scans). Despite this, we typically have enough structure to perform a reliable alignment. In practice, even just three matching features would be sufficient for a registration in this context." width="332px"><p class="caption">
+<img src="trunks-mls.jpg" alt="The 50 main anisotropic features extracted from each point cloud. As expected, they do not match perfectly, primarily due to the low quality of the TLS data, which suffers from significant occlusion, cast shadows and lack of scan positions (here 5 scans). Despite this, we typically have enough structure to perform a reliable alignment. In practice, even just three matching features would be sufficient for a registration in this context." width="47%"><img src="trunk-tls.jpg" alt="The 50 main anisotropic features extracted from each point cloud. As expected, they do not match perfectly, primarily due to the low quality of the TLS data, which suffers from significant occlusion, cast shadows and lack of scan positions (here 5 scans). Despite this, we typically have enough structure to perform a reliable alignment. In practice, even just three matching features would be sufficient for a registration in this context." width="47%"><p class="caption">
 The 50 main anisotropic features extracted from each point cloud. As
 expected, they do not match perfectly, primarily due to the low quality
 of the TLS data, which suffers from significant occlusion, cast shadows
