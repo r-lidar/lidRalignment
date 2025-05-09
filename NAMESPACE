@@ -2,10 +2,8 @@
 
 export(AlignmentScene)
 export(combine_transformations)
-export(rotation_matrix)
 export(rtm_info)
 export(show_alignment)
 export(transform_las)
-export(translation_matrix)
 importFrom(Rcpp,sourceCpp)
 useDynLib(lidRalignment, .registration = TRUE)

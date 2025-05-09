@@ -97,6 +97,7 @@ transform_las <- function(las, M, crs = NULL)
 
   if (methods::is(las, "LAS"))
   {
+    X <- Y <- Z <- . <- NULL
     coords <- as.matrix(las@data[, .(X,Y,Z)])
     coords <- cbind(coords, 1)
     transformed <- coords %*% t(M)

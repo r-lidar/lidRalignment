@@ -4,14 +4,14 @@
 \alias{transform_las}
 \title{Apply a Transformation Matrix to a LAS Object}
 \usage{
-transform_las(las, M, crs = sf::NA_crs_)
+transform_las(las, M, crs = NULL)
 }
 \arguments{
 \item{las}{A \code{LAS} object or a character string representing the file path to a LAS file.}
 
 \item{M}{A 4x4 transformation matrix.}
 
-\item{crs}{Optional CRS to assign to the transformed LAS. Defaults to \code{sf::NA_crs_}.}
+\item{crs}{Optional CRS to assign to the transformed LAS. Can be the epsg code, the wkt string or a sf crs object.}
 }
 \value{
 A transformed \code{LAS} object. If a file path is provided for \code{las}, a new LAS file is created and returned.
