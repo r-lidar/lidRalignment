@@ -56,7 +56,7 @@ and LAS file paths, transforming the point cloud data accordingly.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">transform_las</span><span class="op">(</span><span class="va">las</span>, <span class="va">M</span>, crs <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="va"><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">NA_crs_</a></span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">transform_las</span><span class="op">(</span><span class="va">las</span>, <span class="va">M</span>, crs <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -72,7 +72,7 @@ and LAS file paths, transforming the point cloud data accordingly.</p>
 
 
 <dt id="arg-crs">crs<a class="anchor" aria-label="anchor" href="#arg-crs"></a></dt>
-<dd><p>Optional CRS to assign to the transformed LAS. Defaults to <code><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">sf::NA_crs_</a></code>.</p></dd>
+<dd><p>Optional CRS to assign to the transformed LAS. Can be the epsg code, the wkt string or a sf crs object.</p></dd>
 
 </dl></div>
     <div id="value">
