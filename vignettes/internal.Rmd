@@ -291,6 +291,18 @@ These matrices are sequentially combined into a single final transformation matr
 
 **Job done!**
 
+## Benchmark
+
+Benchmark for the dataset presented here on a laptop: 13th Gen Intel Core i7-1255-U, 10 cores, 12 threads.
+
+- ALS: 200,000 points (~100 pts/m²)
+- MLS: 120 millions points
+- TLS: 100 millions points
+
+```{r, out.width='400px', fig.cap='Computation time split by step for the alignment of ALS with MLS, and TLS with MLS. The prepare step includes noise classification, ground classification, CHM and DTM computations.'}
+knitr::include_graphics("benchmark.png")
+```
+
 ## Trimmed ICP
 
 The Iterative Closest Point (ICP) algorithm is widely used for aligning two 3D point clouds by minimizing the distance between corresponding points. It operates in iterations: in each step, the algorithm finds the nearest neighbor in the target cloud for every point in the source cloud. Based on these point pairs, it computes the best-fitting rigid transformation (a rotation and translation) that minimizes the total alignment error, then applies this transformation to the source cloud and repeats.
