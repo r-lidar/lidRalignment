@@ -38,3 +38,7 @@ Collate:
     'plot.R'
     'registration.R'
     'zzz.R'
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
