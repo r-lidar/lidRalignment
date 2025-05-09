@@ -593,6 +593,24 @@ registered MLS and inherits the same CRS.</p>
 <p><strong>Job done!</strong></p>
 </div>
 <div class="section level2">
+<h2 id="benchmark">Benchmark<a class="anchor" aria-label="anchor" href="#benchmark"></a>
+</h2>
+<p>Benchmark for the dataset presented here on a laptop: 13th Gen Intel
+Core i7-1255-U, 10 cores, 12 threads.</p>
+<ul>
+<li>ALS: 200,000 points (~100 pts/m²)</li>
+<li>MLS: 120 millions points</li>
+<li>TLS: 100 millions points</li>
+</ul>
+<div class="figure" style="text-align: center">
+<img src="benchmark.png" alt="Computation time split by step for the alignment of ALS with MLS, and TLS with MLS. The prepare step includes noise classification, ground classification, CHM and DTM computations." width="400px"><p class="caption">
+Computation time split by step for the alignment of ALS with MLS, and
+TLS with MLS. The prepare step includes noise classification, ground
+classification, CHM and DTM computations.
+</p>
+</div>
+</div>
+<div class="section level2">
 <h2 id="trimmed-icp">Trimmed ICP<a class="anchor" aria-label="anchor" href="#trimmed-icp"></a>
 </h2>
 <p>The Iterative Closest Point (ICP) algorithm is widely used for
