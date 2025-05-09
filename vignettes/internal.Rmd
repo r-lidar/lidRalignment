@@ -83,7 +83,7 @@ The initial misalignment between ALS and MLS includes a 135-degree rotation and 
 
 This example highlights the robustness of the `lidRalignment` pipeline, which is specifically designed to handle such misalignments without any prior assumptions about initial positioning or orientation as well as much extreme case as we will see later.
 
-![](original.jpg){width=700px}
+![](original.jpg){width=100%}
 
 ## Step 1: Data Extraction
 
@@ -103,7 +103,7 @@ This step reduces the spatial extent and focuses the alignment process on the mo
 
 After clipping, we expect to have two (more or less) circular plots centered near the same physical location in the forest. While their centroids may differ in numerical coordinates, due to differing coordinate systems, they should correspond to the same real-world area. If not, the point clouds are not suitable for alignment.
 
-```{r, out.width='700px', fig.align='left', fig.cap='ALS, MLS, and TLS datasets clipped to a 20 m radius (TLS was already clipped to 15 m). The bottom view shows that the TLS data was acquired from five scan positions, with sparse data visible between the scans.'}
+```{r, out.width='100%', fig.align='left', fig.cap='ALS, MLS, and TLS datasets clipped to a 20 m radius (TLS was already clipped to 15 m). The bottom view shows that the TLS data was acquired from five scan positions, with sparse data visible between the scans.'}
 knitr::include_graphics("clipped.jpg")
 ```
 
@@ -174,7 +174,7 @@ Therefore, we apply a brute force alignment strategy: we exhaustively search ove
 
 This results in approximately 60,000 candidate transformations to test. To keep the computation fast, we sub-sampled one random point per 2 meter voxel from the CHM/DTM point clouds reducing them from ~25,000 to ~2,000 points. This reduction is sufficient for finding a coarse alignment. We effectively started from 200 millions points down to 2000 points for alignment purpose. The brute-force search takes approximately 4 seconds on a laptop and is multithreaded.
 
-```{r, out.width='350px', fig.cap='The two sampled point clouds effectively used for the coarse alignment'}
+```{r, out.width='50%', fig.cap='The two sampled point clouds effectively used for the coarse alignment'}
 knitr::include_graphics("als-mls-vox2.jpg")
 ```
 
@@ -197,7 +197,7 @@ To address this, we compute RMSE using only the 50% of point pairs with the smal
 
 At the end of this step, the point clouds are now coarsely but reliably aligned in position and orientation. The process then proceeds to a finer registration.
 
-```{r, out.width='350px', fig.cap='Exhaustive exploration of all the possible rotations and translation to find the global minimum of RMSE. Here at approximatively -135 degrees and -1 meter on X'}
+```{r, out.width='50%', fig.cap='Exhaustive exploration of all the possible rotations and translation to find the global minimum of RMSE. Here at approximatively -135 degrees and -1 meter on X'}
 knitr::include_graphics("rms.jpg")
 ```
 
@@ -272,7 +272,7 @@ With the extracted tree structures, we now perform an extra-fine alignment using
 
 At this stage, the datasets are already well aligned. This final ICP step targets sub-centimeter refinements, leveraging matching parts of trunks across scans.
 
-```{r, out.width='700px', fig.align="left", fig.show="hold", fig.cap='Tree matching before (left) and after (right) extra fine alignment. We gained a few extra centimeters of translation and a few arcminutes of rotation.'}
+```{r, out.width='100%', fig.align="left", fig.show="hold", fig.cap='Tree matching before (left) and after (right) extra fine alignment. We gained a few extra centimeters of translation and a few arcminutes of rotation.'}
 knitr::include_graphics("extrafine.jpg")
 knitr::include_graphics("extrafine2.jpg")
 ```
