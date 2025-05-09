@@ -214,7 +214,7 @@ We now apply ICP between the two CHM/DTM-derived point clouds, using a 90% overl
 Next, we refine the overlap estimate. The coarse alignment may result in a horizontal offset, for example, a 5-meter shift between the two clouds. Given that each cloud is circular with a 20-meter radius, this would reduce their actual geometric overlap to around 84%. We therefore conservatively set the overlap used in ICP to the minimum between 90% and the actual overlap, rounded down to the nearest 10%. In this case, we would use 80% overlap in the final fine alignment. 
 
 ```{r, out.width='400px', fig.cap='Partial overlap in point clouds is an extra challenge that required a trimmed ICP approach.'}
-knitr::include_graphics("overlap.jpg")
+knitr::include_graphics("overlap.png")
 ```
 
 This final overlap value is critical. If it is not computed and adjusted accordingly, the ICP algorithm may fail to align the point clouds altogether. As mentioned earlier, when two circular plots are offset, a significant portion of each cloud may have no corresponding features in the other. The RMSE of the non aligned point cloud could be lower than the aligned one. If the ICP assumes a larger overlap than what actually exists, it may be misled by irrelevant point correspondences, leading to incorrect alignment or convergence failure. Adjusting the overlap to reflect the true shared region ensures robustness and stability of the fine alignment.
