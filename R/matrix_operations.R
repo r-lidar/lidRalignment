@@ -189,7 +189,7 @@ rtm_info <- function(M)
 #' M3 <- matrix(c(1, 0, 3, 1), nrow = 2)  # Translation matrix (move by 3 on x-axis)
 #'
 #' M <- combine_transformations(M1, M2, M3)
-#' @export
+#' @noRd
 combine_transformations <- function(...)
 {
   matrices <- list(...)

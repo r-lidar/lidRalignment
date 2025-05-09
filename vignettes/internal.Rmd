@@ -1,5 +1,5 @@
 ---
-title: "Description of the `lidRalignment` internal algorithm"
+title: "Description of the internal pipeline"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{internal}

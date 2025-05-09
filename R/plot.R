@@ -11,8 +11,7 @@
 #' @return A 3D plot of the reference and transformed moving point clouds. If a transformation is applied,
 #' translation and rotation are also visualized with lines.
 #'
-#' @export
-#' @md
+#' @noRd
 show_alignment = function(ref, mov, M = NULL, size = 2)
 {
   . <- X <- Y <- Z <- NULL

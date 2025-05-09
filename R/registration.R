@@ -17,7 +17,7 @@
 #' @details The function performs coarse registration by evaluating transformations over a large parameter grid,
 #' followed by a fine registration step with a refined grid. RMS error is used to assess the alignment quality.
 #' Optionally, debug visualizations can be displayed using `rgl`.
-#' @noMd
+#' @noRd
 brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbose = TRUE, ...)
 {
   p = list(...)
