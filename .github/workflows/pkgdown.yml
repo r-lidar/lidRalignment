@@ -30,9 +30,7 @@ jobs:
 
       - name: Install lidR and lasR from r-universe
         run: |
-          install.packages("remotes")
-          remotes::install_packages(c("lidR", "lasR"),
-                                     repos = c("https://r-lidar.r-universe.dev", "https://cloud.r-project.org"))
+          install.packages(c("lidR", "lasR"), repos = c("https://r-lidar.r-universe.dev", "https://cloud.r-project.org"))
         shell: Rscript {0}
 
       - uses: r-lib/actions/setup-r-dependencies@v2
