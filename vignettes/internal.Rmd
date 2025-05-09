@@ -142,7 +142,7 @@ By using half the resolution, the DTM contains one-quarter the number of pixels 
 
 With a 20-meter plot radius and raster resolutions of 0.25 m for the CHM and 0.5 m for the DTM, the total number of pixels (and thus points of interest) used for alignment is limited to a maximum of approximately 25,000. This keeps the process both efficient and robust.
 
-```{r, out.width='332px', fig.align="left", fig.show="hold", fig.cap='CHM/DTM point clouds for the ALS (top left), MLS (top right) and TLS (bottom left). We can observe the difference of qualities between ALS, MLS and TLS. But nothing that prevent alignment. Canopy gaps, dominant tree, gaps shapes and DTM shapes are visible in all datasets.'}
+```{r, out.width='47%', fig.align="left", fig.show="hold", fig.cap='CHM/DTM point clouds for the ALS (top left), MLS (top right) and TLS (bottom left). We can observe the difference of qualities between ALS, MLS and TLS. But nothing that prevent alignment. Canopy gaps, dominant tree, gaps shapes and DTM shapes are visible in all datasets.'}
 knitr::include_graphics("chm-dtm-als.jpg")
 knitr::include_graphics("chm-dtm-mls.jpg")
 knitr::include_graphics("chm-dtm-tls.jpg")
@@ -156,7 +156,7 @@ knitr::include_graphics("chm-dtm-tls.jpg")
 We first normalize each point cloud by translating it so that its centroid is at the origin (0,0,0). This ensures that, regardless of their original coordinate systems, the two plots are numerically aligned in space. The transformation matrix used for this centering step is recorded for later use.
 
 
-![](als-mls.jpg){width=332px} ![](mls-tls.jpg){width=332px}
+![](als-mls.jpg){width=47%} ![](mls-tls.jpg){width=47%}
 
 ## Step 3: Coarse Alignment
 
@@ -187,7 +187,7 @@ After identifying a promising transformation, we refine it using a second brute-
 
 This refinement step further improves the alignment and takes only a few extra millisecond second of additional computation time. The transformation matrix used for this registration step is recorded for later use.
 
-![](als-mls-coarse.jpg){width=332px} ![](mls-tls-coarse.jpg){width=332px}
+![](als-mls-coarse.jpg){width=47%} ![](mls-tls-coarse.jpg){width=47%}
 
 ## RMSE Computation
 
@@ -221,7 +221,7 @@ This final overlap value is critical. If it is not computed and adjusted accordi
 
 The transformation matrix used for this registration step is recorded for later use.
 
-![](als-mls-fine.jpg){width=332px} ![](mls-tls-coarse.jpg){width=332px}
+![](als-mls-fine.jpg){width=47%} ![](mls-tls-coarse.jpg){width=47%}
 
 ### Step 4.2: Fine alignment on the Z axis using trimmed ICP
 
@@ -261,7 +261,7 @@ The real challenge here is variability in point cloud quality. In high-quality d
 
 This step typically takes about 30 secondes of computation time.
 
-```{r, out.width='332px', fig.align="left", fig.show="hold", fig.cap='The 50 main anisotropic features extracted from each point cloud. As expected, they do not match perfectly, primarily due to the low quality of the TLS data, which suffers from significant occlusion, cast shadows and lack of scan positions (here 5 scans). Despite this, we typically have enough structure to perform a reliable alignment. In practice, even just three matching features would be sufficient for a registration in this context.'}
+```{r, out.width='47%', fig.align="left", fig.show="hold", fig.cap='The 50 main anisotropic features extracted from each point cloud. As expected, they do not match perfectly, primarily due to the low quality of the TLS data, which suffers from significant occlusion, cast shadows and lack of scan positions (here 5 scans). Despite this, we typically have enough structure to perform a reliable alignment. In practice, even just three matching features would be sufficient for a registration in this context.'}
 knitr::include_graphics("trunks-mls.jpg")
 knitr::include_graphics("trunk-tls.jpg")
 ```
