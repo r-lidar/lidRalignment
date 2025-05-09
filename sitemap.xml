@@ -1,0 +1,17 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/internal.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/AlignmentScene.html</loc></url>
+<url><loc>/reference/brute_force_registration.html</loc></url>
+<url><loc>/reference/combine_transformations.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/rotation_matrix.html</loc></url>
+<url><loc>/reference/rtm_info.html</loc></url>
+<url><loc>/reference/show_alignment.html</loc></url>
+<url><loc>/reference/transform_las.html</loc></url>
+<url><loc>/reference/translation_matrix.html</loc></url>
+</urlset>
+
