@@ -1,23 +1,21 @@
 # lidRalignment
 
 ![license](https://img.shields.io/badge/Licence-GPL--3-blue.svg)
-![Lifecycle:Experimental](https://img.shields.io/badge/Lifecycle-Maturing-997722)
 
 ## Overview
 
-`lidRalignment` is an extension package for `lidR` that enables automatic alignment of forest plot point clouds from different sources, such as ALS with TLS or MLS, or TLS with MLS. The package is robust to large alignment differences (e.g., 180 degrees of misalignment) and supports multiple feature extraction strategies to align airborne with ground data or ground with ground data.
+`lidRalignment` enables automatic alignment of forest plot point clouds from different sources, such as ALS with TLS or MLS, or TLS with MLS, or ALS with ALS in a unified pipeline. The package is robust to large alignment differences (e.g., 180 degrees of misalignment), noise, and leaf-on/leaf-off conditions. A full description of the internal pipeline details is available [:book: here](https://r-lidar.github.io/lidRalignment/articles/internal.html).
 
-![](./man/figures/alignement1.jpg)
-**Figure 1** – The alignment of ALS (red) and MLS (yellow) point clouds is achieved by aligning the CHMs and DTMs, recording the transformation matrix, and applying it to the entire MLS point cloud.
-
-![](./man/figures/alignement2.jpg)
-**Figure 2** – The alignment of MLS (red) and TLS (yellow) point clouds is refined by extracting and aligning isotropic features (most likely the main trunks), recording the transformation matrix, and applying it to the entire TLS point cloud.
+<img src="vignettes/als-mls.jpg" width="330"/> <img src="vignettes/alignement3.jpg" width="330"/> <img src="vignettes/alignement4.jpg" width="330"/>
 
 ## Features
 
-- Aligns forest plots from different sources, such as ALS with TLS or MLS, or TLS with MLS.
-- Is robust to large alignment differences (e.g., 180 degrees of misalignment).
-- Supports extremely noisy and poor-quality data.
+- Aligns forest plots from any combination of ALS, ULS, TLS, and MLS point clouds
+- Robust to large alignment differences (e.g., 180 degrees of misalignment)
+- Supports noisy and poor-quality data
+- Uses the same pipeline for all cases
+- Fast and efficient: alignment takes only a few seconds. Most of the computation time is spent reading the LAS or LAZ files
+
 
 ## Installation
 
@@ -36,6 +34,8 @@ The alignment pipeline consists of four stages, progressing from raw to extra fi
 3. **Fine**: Applies an iterative closest point (ICP) approach to finely align the CHM and DTM.
 4. **Extra Fine**: Used only when aligning two ground-based point clouds. It extracts trees and aligns them to achieve centimeter-level accuracy.
 
+ A full description of the internal pipeline details is availailable [:book: here](https://r-lidar.github.io/lidRalignment/articles/internal.html).
+ 
 ```r
 library(lidR)
 library(lidRalignment)
@@ -66,7 +66,9 @@ crs = sf::st_crs(readLASheader(fref))
 ofile = transform_las(fmov, M, crs)
 ```
 
-Rather than running the full alignment pipeline, it is possible to run it step by step.
+<details>
+<summary>Rather than running the full alignment pipeline, it is possible to run it step by step (click to show).</summary>
+
 
 ```r
 alignment = AlignmentScene$new(fref, fmov)
@@ -85,6 +87,7 @@ alignment$plot("fine")
 alignment$extra_fine_align()
 alignment$plot("extra", compare_to = "fine")
 ```
+</details>
 
 ## Sponsor
 
