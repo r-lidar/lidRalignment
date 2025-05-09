@@ -50,7 +50,7 @@ The challenge is compounded by:
 Even aligning a mobile laser scan with a terrestrial laser scan, acquired from nearly the same location, can be extremely difficult due to occlusions, varying scan quality, inconsistent point densities, differing scan positions, and orientation errors as shown below
 
 ```{r echo=FALSE, out.width='100%', fig.align = "left", fig.show='hold', fig.cap="Two scans of the same forest plot: left: MLS, right: TLS. In the MLS dataset, all trees are fully sampled, the scene coverage is nearly 100%, with minimal occlusion. In contrast, the TLS dataset consists of only five scans, leading to incomplete coverage: several trees are entirely missing or so sparsely sampled that they are effectively unusable. Most visible trees are scanned only from one side, resulting in significant occlusion and shadow zones. Despite representing the same physical location, these two point clouds differ substantially in terms of available and reliable matching features, which poses a real challenge for alignment."}
-knitr::include_graphics(c("mls.png"))
+knitr::include_graphics(c("mls.jpg"))
 ```
 
 As a result, standard point cloud registration techniques are not robust enough to handle the alignment of such disparate scenes. They may succeed only when the scenes are already roughly aligned (small rotations and translations, similar perspectives, and sufficient shared features). But in the general case—with misalignments on the order of 10 meters or 180°, and little to no overlap in geometric features—conventional techniques fail.
@@ -83,7 +83,7 @@ The initial misalignment between ALS and MLS includes a 135-degree rotation and 
 
 This example highlights the robustness of the `lidRalignment` pipeline, which is specifically designed to handle such misalignments without any prior assumptions about initial positioning or orientation as well as much extreme case as we will see later.
 
-![](original.png){width=700px}
+![](original.jpg){width=700px}
 
 ## Step 1: Data Extraction
 
@@ -104,7 +104,7 @@ This step reduces the spatial extent and focuses the alignment process on the mo
 After clipping, we expect to have two (more or less) circular plots centered near the same physical location in the forest. While their centroids may differ in numerical coordinates, due to differing coordinate systems, they should correspond to the same real-world area. If not, the point clouds are not suitable for alignment.
 
 ```{r, out.width='700px', fig.align='left', fig.cap='ALS, MLS, and TLS datasets clipped to a 20 m radius (TLS was already clipped to 15 m). The bottom view shows that the TLS data was acquired from five scan positions, with sparse data visible between the scans.'}
-knitr::include_graphics("clipped.png")
+knitr::include_graphics("clipped.jpg")
 ```
 
 ### Step 1.3: Ground Classification and Noise Filtering
@@ -143,9 +143,9 @@ By using half the resolution, the DTM contains one-quarter the number of pixels 
 With a 20-meter plot radius and raster resolutions of 0.25 m for the CHM and 0.5 m for the DTM, the total number of pixels (and thus points of interest) used for alignment is limited to a maximum of approximately 25,000. This keeps the process both efficient and robust.
 
 ```{r, out.width='332px', fig.align="left", fig.show="hold", fig.cap='CHM/DTM point clouds for the ALS (top left), MLS (top right) and TLS (bottom left). We can observe the difference of qualities between ALS, MLS and TLS. But nothing that prevent alignment. Canopy gaps, dominant tree, gaps shapes and DTM shapes are visible in all datasets.'}
-knitr::include_graphics("chm-dtm-als.png")
-knitr::include_graphics("chm-dtm-mls.png")
-knitr::include_graphics("chm-dtm-tls.png")
+knitr::include_graphics("chm-dtm-als.jpg")
+knitr::include_graphics("chm-dtm-mls.jpg")
+knitr::include_graphics("chm-dtm-tls.jpg")
 ```
 
 
@@ -156,7 +156,7 @@ knitr::include_graphics("chm-dtm-tls.png")
 We first normalize each point cloud by translating it so that its centroid is at the origin (0,0,0). This ensures that, regardless of their original coordinate systems, the two plots are numerically aligned in space. The transformation matrix used for this centering step is recorded for later use.
 
 
-![](als-mls.png){width=332px} ![](mls-tls.png){width=332px}
+![](als-mls.jpg){width=332px} ![](mls-tls.jpg){width=332px}
 
 ## Step 3: Coarse Alignment
 
@@ -175,7 +175,7 @@ Therefore, we apply a brute force alignment strategy: we exhaustively search ove
 This results in approximately 60,000 candidate transformations to test. To keep the computation fast, we sub-sampled one random point per 2 meter voxel from the CHM/DTM point clouds reducing them from ~25,000 to ~2,000 points. This reduction is sufficient for finding a coarse alignment. We effectively started from 200 millions points down to 2000 points for alignment purpose. The brute-force search takes approximately 4 seconds on a laptop and is multithreaded.
 
 ```{r, out.width='350px', fig.cap='The two sampled point clouds effectively used for the coarse alignment'}
-knitr::include_graphics("als-mls-vox2.png")
+knitr::include_graphics("als-mls-vox2.jpg")
 ```
 
 ## Step 3.2: Refinement of Coarse Alignment
@@ -187,7 +187,7 @@ After identifying a promising transformation, we refine it using a second brute-
 
 This refinement step further improves the alignment and takes only a few extra millisecond second of additional computation time. The transformation matrix used for this registration step is recorded for later use.
 
-![](als-mls-coarse.png){width=332px} ![](mls-tls-coarse.png){width=332px}
+![](als-mls-coarse.jpg){width=332px} ![](mls-tls-coarse.jpg){width=332px}
 
 ## RMSE Computation
 
@@ -198,7 +198,7 @@ To address this, we compute RMSE using only the 50% of point pairs with the smal
 At the end of this step, the point clouds are now coarsely but reliably aligned in position and orientation. The process then proceeds to a finer registration.
 
 ```{r, out.width='350px', fig.cap='Exhaustive exploration of all the possible rotations and translation to find the global minimum of RMSE. Here at approximatively -135 degrees and -1 meter on X'}
-knitr::include_graphics("rms.png")
+knitr::include_graphics("rms.jpg")
 ```
 
 ## Step 4: Fine Alignment of CHM and DTM
@@ -214,14 +214,14 @@ We now apply ICP between the two CHM/DTM-derived point clouds, using a 90% overl
 Next, we refine the overlap estimate. The coarse alignment may result in a horizontal offset, for example, a 5-meter shift between the two clouds. Given that each cloud is circular with a 20-meter radius, this would reduce their actual geometric overlap to around 84%. We therefore conservatively set the overlap used in ICP to the minimum between 90% and the actual overlap, rounded down to the nearest 10%. In this case, we would use 80% overlap in the final fine alignment. 
 
 ```{r, out.width='400px', fig.cap='Partial overlap in point clouds is an extra challenge that required a trimmed ICP approach.'}
-knitr::include_graphics("overlap.png")
+knitr::include_graphics("overlap.jpg")
 ```
 
 This final overlap value is critical. If it is not computed and adjusted accordingly, the ICP algorithm may fail to align the point clouds altogether. As mentioned earlier, when two circular plots are offset, a significant portion of each cloud may have no corresponding features in the other. The RMSE of the non aligned point cloud could be lower than the aligned one. If the ICP assumes a larger overlap than what actually exists, it may be misled by irrelevant point correspondences, leading to incorrect alignment or convergence failure. Adjusting the overlap to reflect the true shared region ensures robustness and stability of the fine alignment.
 
 The transformation matrix used for this registration step is recorded for later use.
 
-![](als-mls-fine.png){width=332px} ![](mls-tls-coarse.png){width=332px}
+![](als-mls-fine.jpg){width=332px} ![](mls-tls-coarse.jpg){width=332px}
 
 ### Step 4.2: Fine alignment on the Z axis using trimmed ICP
 
@@ -262,8 +262,8 @@ The real challenge here is variability in point cloud quality. In high-quality d
 This step typically takes about 30 secondes of computation time.
 
 ```{r, out.width='332px', fig.align="left", fig.show="hold", fig.cap='The 50 main anisotropic features extracted from each point cloud. As expected, they do not match perfectly, primarily due to the low quality of the TLS data, which suffers from significant occlusion, cast shadows and lack of scan positions (here 5 scans). Despite this, we typically have enough structure to perform a reliable alignment. In practice, even just three matching features would be sufficient for a registration in this context.'}
-knitr::include_graphics("trunks-mls.png")
-knitr::include_graphics("trunk-tls.png")
+knitr::include_graphics("trunks-mls.jpg")
+knitr::include_graphics("trunk-tls.jpg")
 ```
 
 ### Step 5.2: Extra-fine feature alignment using trimmed ICP
@@ -273,8 +273,8 @@ With the extracted tree structures, we now perform an extra-fine alignment using
 At this stage, the datasets are already well aligned. This final ICP step targets sub-centimeter refinements, leveraging matching parts of trunks across scans.
 
 ```{r, out.width='700px', fig.align="left", fig.show="hold", fig.cap='Tree matching before (left) and after (right) extra fine alignment. We gained a few extra centimeters of translation and a few arcminutes of rotation.'}
-knitr::include_graphics("extrafine.png")
-knitr::include_graphics("extrafine2.png")
+knitr::include_graphics("extrafine.jpg")
+knitr::include_graphics("extrafine2.jpg")
 ```
 
 ## Step 6: Full Registration
