@@ -9,7 +9,7 @@ lidR <img src="https://raw.githubusercontent.com/r-lidar/lidR/master/man/figures
 
 `lidRalignment` enables automatic alignment of forest plot point clouds from different sources, such as ALS with TLS or MLS, or TLS with MLS, or ALS with ALS in a unified pipeline. The package is robust to large alignment differences (e.g., 180 degrees of misalignment), noise, and leaf-on/leaf-off conditions. A full description of the internal pipeline details is available [:book: here](https://r-lidar.github.io/lidRalignment/articles/internal.html).
 
-<img src="vignettes/als-mls.jpg" width="330"/> <img src="vignettes/alignement3.jpg" width="330"/> <img src="vignettes/alignement4.jpg" width="330"/>
+<img src="vignettes/als-mls.jpg" width="260"/> <img src="vignettes/alignement3.jpg" width="260"/> <img src="vignettes/alignement4.jpg" width="260"/>
 
 ## Features
 
