@@ -1,4 +1,4 @@
-lidR <img src="https://raw.githubusercontent.com/r-lidar/lidR/master/man/figures/logo200x231.png" align="right"/>
+lidR <img src="https://raw.githubusercontent.com/r-lidar/lidRalignment/master/man/figures/logo200x231.png" align="right"/>
 ======================================================================================================
 
 # lidRalignment
