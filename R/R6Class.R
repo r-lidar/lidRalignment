@@ -127,7 +127,7 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       else
         cat(" 3. fine alignment: waiting\n")
 
-      if (self$extra_fine)
+      if (self$extra_done)
         cat(" 4. extra fine alignment: done\n")
       else
         cat(" 4. extra fine alignment: waiting\n")
