@@ -1,3 +1,6 @@
+lidR <img src="https://raw.githubusercontent.com/r-lidar/lidR/master/man/figures/logo200x231.png" align="right"/>
+======================================================================================================
+
 # lidRalignment
 
 ![license](https://img.shields.io/badge/Licence-GPL--3-blue.svg)
