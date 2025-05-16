@@ -35,8 +35,8 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
 
   X <- Y <- Z <- . <- NULL
 
-  vref = as.matrix(lidR::decimate_points(ref, lidR::random_per_voxel(res)@data[, .(X,Y,Z)]))
-  umov = as.matrix(lidR::decimate_points(mov, lidR::random_per_voxel(res)@data[, .(X,Y,Z)]))
+  vref = as.matrix(lidR::decimate_points(ref, lidR::random_per_voxel(res))@data[, .(X,Y,Z)])
+  umov = as.matrix(lidR::decimate_points(mov, lidR::random_per_voxel(res))@data[, .(X,Y,Z)])
 
   #x = plot(decimate_points(ref, random_per_voxel(res)), pal = "yellow", size = 2)
   #plot(decimate_points(mov, random_per_voxel(res)), add = x, pal = "red", size = 2)
