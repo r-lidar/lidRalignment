@@ -176,10 +176,10 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       # ==== LOAD THE DATA ====
 
       if(self$verbose) cat("Reading reference point cloud...\n")
-      full_ref = lidR::readTLS(fref, select = "", filter = filter_ref)
+      full_ref = lidR::readTLS(self$fref, select = "", filter = filter_ref)
 
       if(self$verbose) cat("Reading point cloud to align...\n")
-      full_mov = lidR::readTLS(fmov, select = "", filter = filter_mov)
+      full_mov = lidR::readTLS(self$fmov, select = "", filter = filter_mov)
 
       # ==== DATA PREPARATION ====
 
@@ -205,6 +205,9 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       if(self$verbose) cat("Classifying ground points...\n")
       full_ref = lidR::classify_ground(full_ref, csf_ref, last_returns = FALSE)
       full_mov = lidR::classify_ground(full_mov, csf_mov, last_returns = FALSE)
+
+      #full_ref = normalize_height(full_ref, tin())
+      #full_mov = normalize_height(full_mov, tin())
 
       # Now that noise has been removed and the ground is classified, compute the Z offset to align the point clouds along the Z-axis.
       # We use the minimum Z value of the ground points (more robust than the absolute minimum Z).
@@ -250,7 +253,7 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
 
     #' @description
     #' Third function to run. It perform an ICP alignment
-    fine_align = function()
+    fine_align = function(overlap = "auto")
     {
       if (!self$coarse_done)
         stop("fine_align() must be called after coarse_align()")
@@ -259,7 +262,11 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
 
       mov2 = transform_las(self$chmdtm_mov, self$M0)
 
-      overlap = adjust_overlap(90, self$radius, self$M0)
+      if (overlap == "auto")
+        overlap = adjust_overlap(90, self$radius, self$M0)
+      else
+        stopifnot(overlap %in% c(1:10*10))
+
       #self$M1 = cc_icp(self$chmdtm_ref, mov2, overlap = overlap, cc = self$cc, verbose = FALSE)
       self$M1 = icp(self$chmdtm_ref, mov2, overlap = overlap)
 
