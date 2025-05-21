@@ -38,8 +38,8 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
   vref = as.matrix(lidR::decimate_points(ref, lidR::random_per_voxel(res))@data[, .(X,Y,Z)])
   umov = as.matrix(lidR::decimate_points(mov, lidR::random_per_voxel(res))@data[, .(X,Y,Z)])
 
-  #x = plot(decimate_points(ref, random_per_voxel(res)), pal = "yellow", size = 2)
-  #plot(decimate_points(mov, random_per_voxel(res)), add = x, pal = "red", size = 2)
+  #x = lidR::plot(lidR::decimate_points(ref, lidR::random_per_voxel(res)), pal = "yellow", size = 2)
+  #lidR::plot(lidR::decimate_points(mov, lidR::random_per_voxel(res)), add = x, pal = "red", size = 2)
 
   # Coarse registration
   angles <- c(0, seq(-180, 180, by = 2) * pi / 180)
@@ -60,6 +60,7 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
   param_grid <- as.matrix(param_grid)
 
   results = rms_scan_grid(vref, umov, param_grid)
+  results = results[results$rms > 0,] # Fix a bug but need investigation
   best_params <- results[which.min(results$rms),]
 
   rmsi = results$rms[1]
@@ -90,6 +91,7 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
   param_grid <- as.matrix(param_grid)
 
   results = rms_scan_grid(vref, umov, param_grid)
+  results = results[results$rms > 0,] # Fix a bug but need investigation
   best_params <- results[which.min(results$rms),]
 
 
