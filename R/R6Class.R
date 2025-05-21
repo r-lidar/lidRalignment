@@ -268,7 +268,7 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
         stopifnot(overlap %in% c(1:10*10))
 
       #self$M1 = cc_icp(self$chmdtm_ref, mov2, overlap = overlap, cc = self$cc, verbose = FALSE)
-      self$M1 = icp(self$chmdtm_ref, mov2, overlap = overlap)
+      self$M1 = icp(self$chmdtm_ref, mov2, rz_only = FALSE, overlap = overlap)
 
       rmsi = attr(self$M1, "RMSi")
       rmsf = attr(self$M1, "RMSf")
@@ -289,6 +289,7 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       rmsf = attr(self$Mz, "RMSf")
       cat("    RMS initial", round(rmsi, 6), "\n")
       cat("    RMS final", round(rmsf, 6), "\n")
+
       self$fine_done = TRUE
     },
 
