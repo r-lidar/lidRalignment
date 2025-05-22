@@ -151,9 +151,18 @@ strongly missaligned on XY.}
 \subsection{Method \code{fine_align()}}{
 Third function to run. It perform an ICP alignment
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{AlignmentScene$fine_align()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{AlignmentScene$fine_align(overlap = "auto", use_cc = FALSE)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{overlap}}{numeric trimmed ICP overlap. Can be 10, 20, 30, 40 to 100%.}
+
+\item{\code{use_cc}}{bool. Use CloudCompare ICP instead of native ICP.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-AlignmentScene-extra_fine_align"></a>}}

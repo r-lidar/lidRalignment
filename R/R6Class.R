@@ -253,7 +253,9 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
 
     #' @description
     #' Third function to run. It perform an ICP alignment
-    fine_align = function(overlap = "auto")
+    #' @param overlap numeric trimmed ICP overlap. Can be 10, 20, 30, 40 to 100%.
+    #' @param use_cc bool. Use CloudCompare ICP instead of native ICP.
+    fine_align = function(overlap = "auto", use_cc = FALSE)
     {
       if (!self$coarse_done)
         stop("fine_align() must be called after coarse_align()")
@@ -263,17 +265,28 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       mov2 = transform_las(self$chmdtm_mov, self$M0)
 
       if (overlap == "auto")
-        overlap = adjust_overlap(90, self$radius, self$M0)
+        overlap = adjust_overlap(90, self$chmdtm_ref, self$chmdtm_mov, self$M0)
       else
         stopifnot(overlap %in% c(1:10*10))
 
-      #self$M1 = cc_icp(self$chmdtm_ref, mov2, overlap = overlap, cc = self$cc, verbose = FALSE)
-      self$M1 = icp(self$chmdtm_ref, mov2, rz_only = FALSE, overlap = overlap)
+      if(self$verbose) cat("    - overlap =", overlap, "\n")
 
-      rmsi = attr(self$M1, "RMSi")
-      rmsf = attr(self$M1, "RMSf")
-      cat("    RMS initial", round(rmsi, 6), "\n")
-      cat("    RMS final", round(rmsf, 6), "\n")
+      #self$M1 = cc_icp(self$chmdtm_ref, mov2, overlap = overlap, cc = self$cc, verbose = FALSE)
+      ref_chm = self$chmdtm_ref[self$chmdtm_ref$Classification != 2L]
+      mov2 = mov2[mov2$Classification != 2L]
+
+      if (!use_cc)
+        self$M1 = icp(ref_chm, mov2, rz_only = FALSE, overlap = overlap)
+      else
+        self$M1 = cc_icp(ref_chm, mov2, rot = "XYZ", overlap = overlap)
+
+      if (!use_cc)
+      {
+        rmsi = attr(self$M1, "RMSi")
+        rmsf = attr(self$M1, "RMSf")
+        cat("    RMS initial", round(rmsi, 6), "\n")
+        cat("    RMS final", round(rmsf, 6), "\n")
+      }
 
       M = combine_transformations(self$M0, self$M1)
 
@@ -284,11 +297,18 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       mov_gnd = transform_las(mov_gnd, M)
 
       #self$Mz = cc_icp(ref_gnd, mov_gnd, overlap = overlap, skip_txy = TRUE, rot = "NONE", cc = self$cc, verbose = FALSE)
-      self$Mz = icp(ref_gnd, mov_gnd, overlap = overlap, tz_only = TRUE)
-      rmsi = attr(self$Mz, "RMSi")
-      rmsf = attr(self$Mz, "RMSf")
-      cat("    RMS initial", round(rmsi, 6), "\n")
-      cat("    RMS final", round(rmsf, 6), "\n")
+      if (!use_cc)
+        self$Mz = icp(ref_gnd, mov_gnd, overlap = overlap, tz_only = TRUE)
+      else
+        self$Mz = cc_icp(ref_gnd, mov_gnd, overlap = overlap, skip_txy = TRUE, rot = "NONE", verbose = FALSE)
+
+      if (!use_cc)
+      {
+        rmsi = attr(self$Mz, "RMSi")
+        rmsf = attr(self$Mz, "RMSf")
+        cat("    RMS initial", round(rmsi, 6), "\n")
+        cat("    RMS final", round(rmsf, 6), "\n")
+      }
 
       self$fine_done = TRUE
     },
