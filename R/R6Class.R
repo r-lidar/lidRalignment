@@ -339,7 +339,7 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       trunks_mov = transform_las(trunks_mov, self$Mlocal)
 
       mov2 = transform_las(trunks_mov, M)
-      overlap = adjust_overlap(30, self$radius, M)
+      overlap = adjust_overlap(30, self$chmdtm_ref, self$chmdtm_mov, M)
 
       cat("  Iterative closest point extra fine alignment...\n")
 
