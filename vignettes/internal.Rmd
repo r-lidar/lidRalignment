@@ -293,6 +293,24 @@ These matrices are sequentially combined into a single final transformation matr
 
 ## Benchmark
 
+### Accuracy
+
+We used the dataset provided in [Liu et al. 2025](http://dx.doi.org/10.1109/TGRS.2025.3569061) to benchmark the accuracy of `lidRalignment`. The figure below is Figure 7 from Liu *et al.*'s article, on which we overlaid our own results in blue. While our results are close to those of Chen *et al.* 2022, `lidRalignment`:
+
+- Is super easy to install on all platforms (Linux, Mac, Windows)
+- Works with just 4 copy-pasteable lines of code
+- Is parameterless
+- Has been successfully tested on 50+ plots (and quantitatively validated on Liu's plots)
+- Works with any combination of TLS, MLS, ALS, and ULS
+
+
+```{r, out.width='700px', fig.cap='Figure 7 from [Liu et al. 2025](http://dx.doi.org/10.1109/TGRS.2025.3569061) on which we overlayed our own results in blue'}
+knitr::include_graphics("results.png")
+```
+
+
+### Speed
+
 Benchmark for the dataset presented here on a laptop: 13th Gen Intel Core i7-1255-U, 10 cores, 12 threads.
 
 - ALS: 200,000 points (~100 pts/m²)
