@@ -46,6 +46,13 @@ extract_features = function(las, strategy = "chm-dtm", verbose = TRUE)
     lidR::quantize(points[["Z"]], h[["Z scale factor"]], h[["Z offset"]])
 
     res = lidR::LAS(points, h)
+    res = lidR::height_above_ground(res, dtm)
+
+    tmp = res[res$hag > 2]
+    hull = lidR:::st_convex_hull.LAS(tmp)
+    res = lidR::clip_roi(res, hull)
+    lidR::remove_lasattribute(res, "hag")
+
     lidR::st_crs(res) = lidR::st_crs(las)
     attr(res, "strategy") = "chm-dtm"
     return(res)
