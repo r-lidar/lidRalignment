@@ -304,7 +304,7 @@ We used the dataset provided in [Liu et al. 2025](http://dx.doi.org/10.1109/TGRS
 - Works with any combination of TLS, MLS, ALS, and ULS
 
 
-```{r, out.width='700px', fig.cap='Figure 7 from [Liu et al. 2025](http://dx.doi.org/10.1109/TGRS.2025.3569061) on which we overlayed our own results in blue'}
+```{r, out.width='100%', fig.cap='Figure 7 from [Liu et al. 2025](http://dx.doi.org/10.1109/TGRS.2025.3569061) on which we overlayed our own results in blue'}
 knitr::include_graphics("results.png")
 ```
 
