@@ -595,6 +595,32 @@ registered MLS and inherits the same CRS.</p>
 <div class="section level2">
 <h2 id="benchmark">Benchmark<a class="anchor" aria-label="anchor" href="#benchmark"></a>
 </h2>
+<div class="section level3">
+<h3 id="accuracy">Accuracy<a class="anchor" aria-label="anchor" href="#accuracy"></a>
+</h3>
+<p>We used the dataset provided in <a href="http://dx.doi.org/10.1109/TGRS.2025.3569061" class="external-link">Liu et al. 2025</a>
+to benchmark the accuracy of <code>lidRalignment</code>. The figure
+below is Figure 7 from Liu <em>et al.</em>’s article, on which we
+overlaid our own results in blue. While our results are close to those
+of Chen <em>et al.</em> 2022, <code>lidRalignment</code>:</p>
+<ul>
+<li>Is super easy to install on all platforms (Linux, Mac, Windows)</li>
+<li>Works with just 4 copy-pasteable lines of code</li>
+<li>Is parameterless</li>
+<li>Has been successfully tested on 50+ plots (and quantitatively
+validated on Liu’s plots)</li>
+<li>Works with any combination of TLS, MLS, ALS, and ULS</li>
+</ul>
+<div class="figure" style="text-align: center">
+<img src="results.png" alt="Figure 7 from [Liu et al. 2025](http://dx.doi.org/10.1109/TGRS.2025.3569061) on which we overlayed our own results in blue" width="700px"><p class="caption">
+Figure 7 from <a href="http://dx.doi.org/10.1109/TGRS.2025.3569061" class="external-link">Liu
+et al. 2025</a> on which we overlayed our own results in blue
+</p>
+</div>
+</div>
+<div class="section level3">
+<h3 id="speed">Speed<a class="anchor" aria-label="anchor" href="#speed"></a>
+</h3>
 <p>Benchmark for the dataset presented here on a laptop: 13th Gen Intel
 Core i7-1255-U, 10 cores, 12 threads.</p>
 <ul>
@@ -608,6 +634,7 @@ Computation time split by step for the alignment of ALS with MLS, and
 TLS with MLS. The prepare step includes noise classification, ground
 classification, CHM and DTM computations.
 </p>
+</div>
 </div>
 </div>
 <div class="section level2">
