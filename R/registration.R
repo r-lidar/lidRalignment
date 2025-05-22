@@ -18,7 +18,7 @@
 #' followed by a fine registration step with a refined grid. RMS error is used to assess the alignment quality.
 #' Optionally, debug visualizations can be displayed using `rgl`.
 #' @noRd
-brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbose = TRUE, ...)
+brute_force_registration <- function(ref, mov, res = 2, max_offset = 8, verbose = TRUE, ...)
 {
   p = list(...)
 
@@ -35,8 +35,42 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
 
   X <- Y <- Z <- . <- NULL
 
-  vref = as.matrix(lidR::decimate_points(ref, lidR::random_per_voxel(res))@data[, .(X,Y,Z)])
-  umov = as.matrix(lidR::decimate_points(mov, lidR::random_per_voxel(res))@data[, .(X,Y,Z)])
+  tmp = ref[ref$hag > 1]
+  ref_hull = lidR:::st_convex_hull.LAS(tmp)
+
+  tmp = mov[mov$hag > 1]
+  mov_hull = lidR:::st_convex_hull.LAS(tmp)
+
+  # Aligning only the CHM
+  Classification = NULL
+  vref = lidR::filter_poi(ref, Classification != 2L)
+  umov = lidR::filter_poi(mov, Classification != 2L)
+
+  vref = lidR::clip_roi(vref, ref_hull)
+  umov = lidR::clip_roi(umov, mov_hull)
+
+  # If we have too many points on the ground and the ground is flat
+  # we will have trouble. Having ground point in gap is fine we want them
+  # but too many is an issue. More than 50% is likely to prevent find a minima of
+  # RMSE
+  ngnd = sum(vref$hag < 1)
+  npoints = lidR::npoints(vref)
+  ratio = ngnd/npoints
+  if (ratio > 0.3)
+  {
+    hag = NULL
+    vref = lidR::filter_poi(vref, hag >= 1)
+    umov = lidR::filter_poi(umov, hag >= 1)
+  }
+
+  if (lidR::npoints(vref) > 5000 | lidR::npoints(umov) > 5000)
+  {
+    vref = lidR::decimate_points(vref, lidR::random_per_voxel(res))
+    umov = lidR::decimate_points(umov, lidR::random_per_voxel(res))
+  }
+
+  vref = as.matrix(vref@data[, .(X,Y,Z)])
+  umov = as.matrix(umov@data[, .(X,Y,Z)])
 
   #x = lidR::plot(lidR::decimate_points(ref, lidR::random_per_voxel(res)), pal = "yellow", size = 2)
   #lidR::plot(lidR::decimate_points(mov, lidR::random_per_voxel(res)), add = x, pal = "red", size = 2)
@@ -53,6 +87,10 @@ brute_force_registration <- function(ref, mov, res = 0.5, max_offset = 8, verbos
     dtm_mov = lidR::pixel_metrics(mov, ~min(Z), 1)
 
     Z0 = terra::extract(dtm_mov, cbind(0,0))$V1
+
+    if (is.na(Z0))
+      stop("The DTM at (0,0) for the movable dataset is NA")
+
     Z = terra::extract(dtm_ref, param_grid[,2:3])$V1
     param_grid$dz = Z-Z0
   }

@@ -242,7 +242,7 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
     #' @param max_offset numeric. Maximum translation possible. Increase if the point cloud are
     #' strongly missaligned on XY.
     #' @param debug logical.
-    coarse_align = function(res = 2, max_offset = 8, debug = FALSE)
+    coarse_align = function(res = 2, max_offset = 10, debug = FALSE)
     {
       if (!self$prepare_done)
         stop("coarse_align() must be called after prepare()")
@@ -253,7 +253,7 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
 
     #' @description
     #' Third function to run. It perform an ICP alignment
-    #' @param overlap numeric trimmed ICP overlap. Can be 10, 20, 30, 40 to 100%.
+    #' @param overlap numeric trimmed ICP overlap. Can be 10, 20, 30, 40 to 100.
     #' @param use_cc bool. Use CloudCompare ICP instead of native ICP.
     fine_align = function(overlap = "auto", use_cc = FALSE)
     {
@@ -262,23 +262,25 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
 
       if(self$verbose) cat("  Iterative closest point fine alignment\n")
 
-      mov2 = transform_las(self$chmdtm_mov, self$M0)
+      ref = self$chmdtm_ref
+      mov = self$chmdtm_mov
 
       if (overlap == "auto")
         overlap = adjust_overlap(90, self$chmdtm_ref, self$chmdtm_mov, self$M0)
       else
         stopifnot(overlap %in% c(1:10*10))
 
-      if(self$verbose) cat("    - overlap =", overlap, "\n")
+      if(self$verbose) cat("   overlap =", overlap, "\n")
 
-      #self$M1 = cc_icp(self$chmdtm_ref, mov2, overlap = overlap, cc = self$cc, verbose = FALSE)
-      ref_chm = self$chmdtm_ref[self$chmdtm_ref$Classification != 2L]
-      mov2 = mov2[mov2$Classification != 2L]
+      # Aligning only the CHM
+      ref_chm = ref[ref$Classification != 2L]
+      mov_chm = mov[mov$Classification != 2L]
+      mov_chm = transform_las(mov_chm, self$M0)
 
       if (!use_cc)
-        self$M1 = icp(ref_chm, mov2, rz_only = FALSE, overlap = overlap)
+        self$M1 = icp(ref_chm, mov_chm, rz_only = FALSE, overlap = overlap)
       else
-        self$M1 = cc_icp(ref_chm, mov2, rot = "XYZ", overlap = overlap)
+        self$M1 = cc_icp(ref_chm, mov_chm, rot = "XYZ", overlap = overlap)
 
       if (!use_cc)
       {
@@ -292,11 +294,10 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
 
       if(self$verbose) cat("  Iterative closest point fine Z alignment\n")
 
-      ref_gnd = lidR::filter_ground(self$chmdtm_ref)
-      mov_gnd = lidR::filter_ground(self$chmdtm_mov)
+      ref_gnd = lidR::filter_ground(ref)
+      mov_gnd = lidR::filter_ground(mov)
       mov_gnd = transform_las(mov_gnd, M)
 
-      #self$Mz = cc_icp(ref_gnd, mov_gnd, overlap = overlap, skip_txy = TRUE, rot = "NONE", cc = self$cc, verbose = FALSE)
       if (!use_cc)
         self$Mz = icp(ref_gnd, mov_gnd, overlap = overlap, tz_only = TRUE)
       else

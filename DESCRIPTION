@@ -17,7 +17,8 @@ Imports:
     grDevices,
     methods,
     Rcpp,
-    R6
+    R6,
+    sf
 Remotes:
     r-lidar/lidR,
     r-lidar/lasR

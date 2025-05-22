@@ -129,7 +129,7 @@ First function to run. It read the point cloud, extract features, and perform ra
 \subsection{Method \code{coarse_align()}}{
 Second function to run. It perform a brute force alignment
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{AlignmentScene$coarse_align(res = 2, max_offset = 8, debug = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{AlignmentScene$coarse_align(res = 2, max_offset = 10, debug = FALSE)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -157,7 +157,7 @@ Third function to run. It perform an ICP alignment
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{overlap}}{numeric trimmed ICP overlap. Can be 10, 20, 30, 40 to 100%.}
+\item{\code{overlap}}{numeric trimmed ICP overlap. Can be 10, 20, 30, 40 to 100.}
 
 \item{\code{use_cc}}{bool. Use CloudCompare ICP instead of native ICP.}
 }
