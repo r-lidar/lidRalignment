@@ -8,6 +8,7 @@ adjust_overlap = function(overlap, ref, mov, M)
 {
   href = sf::st_convex_hull(ref)
   hmov = sf::st_convex_hull(transform_las(mov, M))
+  sf::st_crs(hmov) = sf::st_crs(href)
   poverlap = sf::st_intersection(href, hmov)
   a = sf::st_area(poverlap)
   A = sf::st_area(hmov)
