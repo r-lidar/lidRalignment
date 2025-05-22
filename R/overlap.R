@@ -4,12 +4,20 @@
 #' @param r plot radius
 #' @param M brute force registration matrix
 #' @noRd
-adjust_overlap = function(overlap, r, M)
+adjust_overlap = function(overlap, ref, mov, M)
 {
-  d = sqrt(sum(M[1:2,4]^2))
-  ans = circle_overlap(r, d)
+  href = sf::st_convex_hull(ref)
+  hmov = sf::st_convex_hull(transform_las(mov, M))
+  poverlap = sf::st_intersection(href, hmov)
+  a = sf::st_area(poverlap)
+  A = sf::st_area(hmov)
+  ans = a/A*100
+
+  #d = sqrt(sum(M[1:2,4]^2))
+  #ans = circle_overlap(r, d)
   ans = floor(ans / 10) * 10
   ans = min(overlap, ans)
+  ans = ans-10
   ans = max(ans, 10)
   ans
 }
