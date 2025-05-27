@@ -165,6 +165,7 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
     prepare = function() {
 
       filter_ref = ""
+      select = "c"
       csf_ref = lidR::csf(rigidness = 2)
 
       filter_mov = "-keep_random_fraction 0.2"
@@ -176,12 +177,37 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       # ==== LOAD THE DATA ====
 
       if(self$verbose) cat("Reading reference point cloud...\n")
-      full_ref = lidR::readTLS(self$fref, select = "", filter = filter_ref)
+      full_ref = lidR::readTLS(self$fref, select = select, filter = filter_ref)
 
       if(self$verbose) cat("Reading point cloud to align...\n")
-      full_mov = lidR::readTLS(self$fmov, select = "", filter = filter_mov)
+      full_mov = lidR::readTLS(self$fmov, select = select, filter = filter_mov)
 
       # ==== DATA PREPARATION ====
+
+      if(self$verbose) cat("Checking for pre-classified ground points...\n")
+
+      ref_has_gnd = sum(full_ref$Classification == 2L) > 0L
+      mov_has_gnd = sum(full_mov$Classification == 2L) > 0L
+      dtm_ref = NULL
+      dtm_mov = NULL
+
+      if (ref_has_gnd)
+      {
+        if(self$verbose) cat("  Reference point cloud has ground points...\n")
+        dtm_ref = lidR::rasterize_terrain(full_ref, 0.5, lidR::tin())
+        dtm_ref = lidR:::raster_as_las(dtm_ref)
+        dtm_ref@data$Classification = 2L
+        full_ref = suppressWarnings(rbind(full_ref, dtm_ref))
+      }
+
+      if (mov_has_gnd)
+      {
+        if(self$verbose) cat("  Moving point cloud has ground points...\n")
+        dtm_mov = lidR::rasterize_terrain(full_mov, 1, lidR::tin())
+        dtm_mov = lidR:::raster_as_las(dtm_mov)
+        dtm_mov@data$Classification = 2L
+        full_mov = suppressWarnings(rbind(full_mov, dtm_mov))
+      }
 
       global_shift_x = mean(full_ref$X)
       global_shift_y = mean(full_ref$Y)
@@ -190,9 +216,9 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       center_y = mean(full_mov$Y)
 
       # Clip a 20 m radius. This is sufficient and ensures both datasets have the same size.
-      if(self$verbose) cat("Clipping point clouds...\n")
-      full_ref = lidR::clip_circle(full_ref, global_shift_x, global_shift_y, self$radius)
-      full_mov = lidR::clip_circle(full_mov, center_x, center_y, self$radius)
+      if(self$verbose) cat("Clipping point clouds with a buffer...\n")
+      full_ref = lidR::clip_circle(full_ref, global_shift_x, global_shift_y, self$radius+2) # +5m buffer for ground classification
+      full_mov = lidR::clip_circle(full_mov, center_x, center_y, self$radius+2)
 
       # Remove outlier noise to ensure that the CHM and DTM are meaningful.
       if(self$verbose) cat("Cleaning noise points...\n")
@@ -203,11 +229,20 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
 
       # Classify ground points to compute a DTM.
       if(self$verbose) cat("Classifying ground points...\n")
-      full_ref = lidR::classify_ground(full_ref, csf_ref, last_returns = FALSE)
-      full_mov = lidR::classify_ground(full_mov, csf_mov, last_returns = FALSE)
 
-      #full_ref = normalize_height(full_ref, tin())
-      #full_mov = normalize_height(full_mov, tin())
+      if (!ref_has_gnd)
+        full_ref = lidR::classify_ground(full_ref, csf_ref, last_returns = FALSE)
+      else
+        if(self$verbose) cat(" Skip reference point cloud.\n")
+
+      if (!mov_has_gnd)
+        full_mov = lidR::classify_ground(full_mov, csf_mov, last_returns = FALSE)
+      else
+        if(self$verbose) cat(" Skip moving point cloud.\n")
+
+      if(self$verbose) cat("Clipping point clouds...\n")
+      full_ref = lidR::clip_circle(full_ref, global_shift_x, global_shift_y, self$radius)
+      full_mov = lidR::clip_circle(full_mov, center_x, center_y, self$radius)
 
       # Now that noise has been removed and the ground is classified, compute the Z offset to align the point clouds along the Z-axis.
       # We use the minimum Z value of the ground points (more robust than the absolute minimum Z).
