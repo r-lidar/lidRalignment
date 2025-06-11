@@ -46,7 +46,7 @@ fmov = "mls_file.las"
 # what we are aligning in order to perform or not
 # the last extra fine alignment
 alignment = AlignmentScene$new(fref, fmov)
-alignment$set_ref_is_ground_based(TRUE)
+alignment$set_ref_is_ground_based(FALSE)
 alignment$set_mov_is_ground_based(TRUE)
 
 # Run the alignment pipeline
@@ -71,7 +71,7 @@ ofile = transform_las(fmov, M, crs)
 
 ```r
 alignment = AlignmentScene$new(fref, fmov)
-alignment$set_ref_is_ground_based(TRUE)
+alignment$set_ref_is_ground_based(FALSE)
 alignment$set_mov_is_ground_based(TRUE)
 
 alignment$prepare()
