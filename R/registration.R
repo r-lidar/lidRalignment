@@ -79,7 +79,11 @@ brute_force_registration <- function(ref, mov, res = 2, max_offset = 8, verbose 
   angles <- c(0, seq(-180, 180, by = 2) * pi / 180)
   dx <- c(0, seq(-max_offset, max_offset, by = 1))
   dy <- c(0, seq(-max_offset, max_offset, by = 1))
+<<<<<<< HEAD
   angle <- sort(unique(angles))
+=======
+  angle <- sort(unique(angle))
+>>>>>>> 330401ce333b91c968ee3550ad3c388e8abef353
   dx <- sort(unique(dx))
   dy <- sort(unique(dy))
 
@@ -102,8 +106,7 @@ brute_force_registration <- function(ref, mov, res = 2, max_offset = 8, verbose 
     nas = is.na(param_grid$dz)
     if (any(nas))
     {
-      warning("Considering the search size and/or the dataset shape some translations make the centroid of the movable dataset outside the boundaries of the fixed dataset. Some transformations cannot be tested.", call. = FALSE)
-      param_grid = param_grid[!nas,]
+      warning("Considering the search size and/or the dataset shape some translations make the centroid of the movable dataset outside the fixed dataset. Some transformations cannot be tested.")
     }
   }
 
