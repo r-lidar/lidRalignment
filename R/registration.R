@@ -79,11 +79,8 @@ brute_force_registration <- function(ref, mov, res = 2, max_offset = 8, verbose 
   angles <- c(0, seq(-180, 180, by = 2) * pi / 180)
   dx <- c(0, seq(-max_offset, max_offset, by = 1))
   dy <- c(0, seq(-max_offset, max_offset, by = 1))
-<<<<<<< HEAD
   angle <- sort(unique(angles))
-=======
-  angle <- sort(unique(angle))
->>>>>>> 330401ce333b91c968ee3550ad3c388e8abef353
+  angle <- sort(unique(angles))
   dx <- sort(unique(dx))
   dy <- sort(unique(dy))
 
