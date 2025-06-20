@@ -103,6 +103,7 @@ brute_force_registration <- function(ref, mov, res = 2, max_offset = 8, verbose 
     nas = is.na(param_grid$dz)
     if (any(nas))
     {
+      param_grid = param_grid[!nas, ]
       warning("Considering the search size and/or the dataset shape some translations make the centroid of the movable dataset outside the fixed dataset. Some transformations cannot be tested.")
     }
   }
