@@ -79,6 +79,10 @@ brute_force_registration <- function(ref, mov, res = 2, max_offset = 8, verbose 
   angles <- c(0, seq(-180, 180, by = 2) * pi / 180)
   dx <- c(0, seq(-max_offset, max_offset, by = 1))
   dy <- c(0, seq(-max_offset, max_offset, by = 1))
+  angle <- sort(unique(angle))
+  dx <- sort(unique(dx))
+  dy <- sort(unique(dy))
+
   param_grid <- expand.grid(angle = angles, dx = dx, dy = dy, dz = 0)
 
   if (!is.null(strategy) && strategy == "chm-dtm")
@@ -93,6 +97,23 @@ brute_force_registration <- function(ref, mov, res = 2, max_offset = 8, verbose 
 
     Z = terra::extract(dtm_ref, param_grid[,2:3])$V1
     param_grid$dz = Z-Z0
+
+    # remove outside dtm
+    nas = is.na(param_grid$dz)
+    if (any(nas))
+    {
+      warning("Considering the search size and/or the dataset shape some translations make the centroid of the movable dataset outside the fixed dataset. Some transformations cannot be tested.")
+      param_grid = param_grid[!nas,]
+    }
+  }
+
+  if (isTRUE(p$debug))
+  {
+    dxy = data.frame(x =param_grid$dx, y =param_grid$dy)
+    dxy = dxy[!duplicated(dxy),]
+    u = terra::focal(dtm_ref, w = 3, fun = "mean")
+    terra::plot(u, col = lidR::height.colors(25), main = "Tested XY translation")
+    points(dxy, cex = 0.5, pch = 3)
   }
 
   param_grid <- as.matrix(param_grid)
@@ -100,7 +121,6 @@ brute_force_registration <- function(ref, mov, res = 2, max_offset = 8, verbose 
   results = rms_scan_grid(vref, umov, param_grid)
   results = results[results$rms > 0,] # Fix a bug but need investigation
   best_params <- results[which.min(results$rms),]
-
   rmsi = results$rms[1]
 
   if (isTRUE(p$debug))
@@ -129,9 +149,8 @@ brute_force_registration <- function(ref, mov, res = 2, max_offset = 8, verbose 
   param_grid <- as.matrix(param_grid)
 
   results = rms_scan_grid(vref, umov, param_grid)
-  results = results[results$rms > 0,] # Fix a bug but need investigation
+  results = results[results$rms > 0,] # Fix a bug but need investigation (should be fixed by removin NAs I guess)
   best_params <- results[which.min(results$rms),]
-
 
   if (isTRUE(p$debug))
   {
