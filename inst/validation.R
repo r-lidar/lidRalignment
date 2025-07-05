@@ -2,7 +2,10 @@ library(lidRalignment)
 library(dplyr)
 library(tidyr)
 
-files = list.files("/home/jr/Documents/Usherbrooke/data/ForestReg", recursive = TRUE, pattern = ".las", full.names = TRUE)
+dir = "Y:/Documents/Usherbrooke/data/ForestReg"
+dir = "/home/jr/Documents/Usherbrooke/data/ForestReg"
+
+files = list.files(dir, recursive = TRUE, pattern = ".las", full.names = TRUE)
 dirs <- dirname(files)
 plot <- basename(dirs)
 difficulty <- basename(dirname(dirs))
@@ -15,7 +18,7 @@ files <- data.frame(
 files$type <- ifelse(startsWith(basename(files$filename), "TLS"), "mov", ifelse(startsWith(basename(files$filename), "ULS"), "fix", NA))
 files <- pivot_wider(files, id_cols = c("difficulty", "plot"), names_from = "type", values_from = "filename")
 
-matrices = list.files("/home/jr/Documents/Usherbrooke/data/ForestReg", recursive = TRUE, pattern = ".txt", full.names = TRUE)
+matrices = list.files(dir, recursive = TRUE, pattern = ".txt", full.names = TRUE)
 dirs <- dirname(matrices)
 plot <- basename(dirs)
 difficulty <- basename(dirname(dirs))
@@ -42,7 +45,7 @@ data = left_join(files, matrices, by = c("difficulty", "plot"))
 # S10 i = 6
 # S14 i = 9
 # S15 i = 17
-i = 1
+i = 2
 
 for (i in 1:17)
 {
@@ -65,7 +68,7 @@ for (i in 1:17)
   alignment$prepare()
   #alignment$plot("raw")
 
-  alignment$coarse_align(res = 2, max_offset = max_offset, debug = F)
+  alignment$coarse_align(res = 2, max_offset = 20, debug = T)
   #alignment$plot("coarse")
 
   alignment$fine_align(use_cc = F)
@@ -135,6 +138,7 @@ p1 <- ggplot(res) +
 p2 <- ggplot(res) +
   aes(x = plot, y = dz, col = difficulty) +
   geom_point() +
+  xlab("Plot") + ylab("Avegrage Z translation residual (cm)")+
   nolegend
 p3 <- ggplot(res) +
   aes(x = plot, y = abs(rzdeg), col = difficulty) +

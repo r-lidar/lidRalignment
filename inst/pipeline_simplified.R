@@ -5,14 +5,16 @@ fref = "als_file.las"
 fmov = "mls_file.las"
 
 # Setup the point clouds to align
-alignment = AlignmentScene$new(fref, fmov)
+alignment = AlignmentScene$new(fref, fmov, verbose = TRUE)
 alignment$set_ref_is_ground_based(FALSE)
 alignment$set_mov_is_ground_based(TRUE)
+alignment$set_radius(20)
+
 
 alignment$prepare()
 alignment$plot("raw")
 
-alignment$coarse_align()
+alignment$coarse_align(debug = T)
 alignment$plot("coarse")
 
 alignment$fine_align()
