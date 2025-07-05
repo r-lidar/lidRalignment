@@ -14,7 +14,8 @@ lidRalignment <img src="https://raw.githubusercontent.com/r-lidar/lidRalignment/
 - Supports noisy and poor-quality data
 - Uses the same pipeline for all cases
 - Fast and efficient: alignment takes only a few seconds. Most of the computation time is spent reading the LAS or LAZ files
-
+- No parameter
+- Tested on a massive dataset (more than 70 plots)
 
 ## Installation
 
