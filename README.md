@@ -15,7 +15,7 @@ lidRalignment <img src="https://raw.githubusercontent.com/r-lidar/lidRalignment/
 - Uses the same pipeline for all cases
 - Fast and efficient: alignment takes only a few seconds. Most of the computation time is spent reading the LAS or LAZ files
 - No parameter
-- Tested on a massive dataset (more than 70 plots)
+- Tested on a massive dataset (more than 80 plots)
 
 ## Installation
 
@@ -34,7 +34,7 @@ The alignment pipeline consists of four stages, progressing from raw to extra fi
 3. **Fine**: Applies an iterative closest point (ICP) approach to finely align the CHM and DTM.
 4. **Extra Fine**: Used only when aligning two ground-based point clouds. It extracts trees and aligns them to achieve centimeter-level accuracy.
 
- A full description of the internal pipeline details is availailable [:book: here](https://r-lidar.github.io/lidRalignment/articles/internal.html).
+ A full description of the internal pipeline details is available [:book: here](https://r-lidar.github.io/lidRalignment/articles/internal.html).
  
 ```r
 library(lidR)

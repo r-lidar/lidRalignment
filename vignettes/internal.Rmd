@@ -178,7 +178,7 @@ This results in approximately 60,000 candidate transformations to test. To keep 
 knitr::include_graphics("als-mls-vox2.jpg")
 ```
 
-## Step 3.2: Refinement of Coarse Alignment
+### Step 3.2: Refinement of Coarse Alignment
 
 After identifying a promising transformation, we refine it using a second brute-force search, this time in a smaller neighborhood around the initial solution:
 
@@ -300,7 +300,7 @@ We used the dataset provided in [Liu et al. 2025](http://dx.doi.org/10.1109/TGRS
 - Is super easy to install on all platforms (Linux, Mac, Windows)
 - Works with just 4 copy-pasteable lines of code
 - Is parameterless
-- Has been successfully tested on 50+ plots (and quantitatively validated on Liu's plots)
+- Has been successfully tested on more than 80 plots (and quantitatively validated on Liu's plots)
 - Works with any combination of TLS, MLS, ALS, and ULS
 
 
@@ -325,6 +325,6 @@ knitr::include_graphics("benchmark.png")
 
 The Iterative Closest Point (ICP) algorithm is widely used for aligning two 3D point clouds by minimizing the distance between corresponding points. It operates in iterations: in each step, the algorithm finds the nearest neighbor in the target cloud for every point in the source cloud. Based on these point pairs, it computes the best-fitting rigid transformation (a rotation and translation) that minimizes the total alignment error, then applies this transformation to the source cloud and repeats.
 
-In the standard form of ICP, all point correspondences are used to compute the transformation, which can lead to poor results when parts of the clouds do not actually overlap — for instance, if there are occlusions, partial scans, or significant outliers.
+In the standard form of ICP, all point correspondences are used to compute the transformation, which can lead to poor results when parts of the clouds do not actually overlap, for instance, if there are occlusions, partial scans, or significant outliers.
 
 Our method uses an approach known as trimmed ICP, inspired by CloudCompare. At each iteration, we still compute nearest neighbors for all source points, but we then sort these correspondences by distance and retain only a specified percentage (overlap%) of the best matches. These selected point pairs are used to estimate the transformation for that iteration. Crucially, the set of retained points can change from one iteration to the next, dynamically adapting as the alignment improves. This helps the algorithm focus only on regions where the two clouds truly overlap, leading to more stable and accurate convergence, even when large parts of the data don't match.
