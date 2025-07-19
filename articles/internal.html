@@ -366,10 +366,9 @@ The two sampled point clouds effectively used for the coarse alignment
 </p>
 </div>
 </div>
-</div>
-<div class="section level2">
-<h2 id="step-3-2-refinement-of-coarse-alignment">Step 3.2: Refinement of Coarse Alignment<a class="anchor" aria-label="anchor" href="#step-3-2-refinement-of-coarse-alignment"></a>
-</h2>
+<div class="section level3">
+<h3 id="step-3-2-refinement-of-coarse-alignment">Step 3.2: Refinement of Coarse Alignment<a class="anchor" aria-label="anchor" href="#step-3-2-refinement-of-coarse-alignment"></a>
+</h3>
 <p>After identifying a promising transformation, we refine it using a
 second brute-force search, this time in a smaller neighborhood around
 the initial solution:</p>
@@ -382,6 +381,7 @@ few extra millisecond second of additional computation time. The
 transformation matrix used for this registration step is recorded for
 later use.</p>
 <p><img src="als-mls-coarse.jpg" style="width:47.0%"><img src="mls-tls-coarse.jpg" style="width:47.0%"></p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="rmse-computation">RMSE Computation<a class="anchor" aria-label="anchor" href="#rmse-computation"></a>
@@ -607,8 +607,8 @@ of Chen <em>et al.</em> 2022, <code>lidRalignment</code>:</p>
 <li>Is super easy to install on all platforms (Linux, Mac, Windows)</li>
 <li>Works with just 4 copy-pasteable lines of code</li>
 <li>Is parameterless</li>
-<li>Has been successfully tested on 50+ plots (and quantitatively
-validated on Liu’s plots)</li>
+<li>Has been successfully tested on more than 80 plots (and
+quantitatively validated on Liu’s plots)</li>
 <li>Works with any combination of TLS, MLS, ALS, and ULS</li>
 </ul>
 <div class="figure" style="text-align: center">
@@ -650,7 +650,7 @@ minimizes the total alignment error, then applies this transformation to
 the source cloud and repeats.</p>
 <p>In the standard form of ICP, all point correspondences are used to
 compute the transformation, which can lead to poor results when parts of
-the clouds do not actually overlap — for instance, if there are
+the clouds do not actually overlap, for instance, if there are
 occlusions, partial scans, or significant outliers.</p>
 <p>Our method uses an approach known as trimmed ICP, inspired by
 CloudCompare. At each iteration, we still compute nearest neighbors for
