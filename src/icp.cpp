@@ -124,7 +124,7 @@ Rcpp::NumericMatrix cpp_icp(Eigen::MatrixXd& source_mat, Eigen::MatrixXd& target
     rms = 0.0;
     for (size_t i = 0; i < n; ++i)
     {
-      rms += matches[i].dist;
+      rms += std::sqrt(matches[i].dist);
     }
     rms /= n;
 

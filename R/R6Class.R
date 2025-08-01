@@ -313,7 +313,7 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       mov_chm = transform_las(mov_chm, self$M0)
 
       if (!use_cc)
-        self$M1 = icp(ref_chm, mov_chm, rz_only = FALSE, overlap = overlap)
+        self$M1 = icp(ref_chm, mov_chm, rz_only = TRUE, overlap = overlap)
       else
         self$M1 = cc_icp(ref_chm, mov_chm, rot = "XYZ", overlap = overlap)
 
@@ -374,12 +374,12 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       trunks_mov = transform_las(trunks_mov, self$Mlocal)
 
       mov2 = transform_las(trunks_mov, M)
-      overlap = adjust_overlap(30, self$chmdtm_ref, self$chmdtm_mov, M)
+      overlap = 30
 
       cat("  Iterative closest point extra fine alignment...\n")
 
       #self$Mex = cc_icp(trunks_ref, mov2, overlap = overlap, cc = self$cc, verbose = FALSE)
-      self$Mex = icp(trunks_ref, mov2, overlap = overlap)
+      self$Mex = icp(trunks_ref, mov2, overlap = overlap, rz_only = FALSE)
       rmsi = attr(self$Mex, "RMSi")
       rmsf = attr(self$Mex, "RMSf")
       cat("    RMS initial", round(rmsi, 6), "\n")
