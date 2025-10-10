@@ -95,6 +95,6 @@ alignment$plot("extra", compare_to = "fine")
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Universit%C3%A9_de_Sherbrooke_%28logo%29_%282%29.svg/langfr-1920px-Universit%C3%A9_de_Sherbrooke_%28logo%29_%282%29.svg.png" alt="Sherbrooke university logo" width="400px">
 
-The development of the package was supported by data collected by Jonathan Boucher, Anne Cotton-Gagnon and Jean Marchal with method contribution by Bastien Vandendaele: Canadian Forest Service.
+<!-- The development of the package was supported by data collected by Jonathan Boucher, Anne Cotton-Gagnon and Jean Marchal with method contribution by Bastien Vandendaele: Canadian Forest Service.
 
-<img src="https://ecostrat.com/wp-content/uploads/nrcan-logo.png" alt="nrcan-logo" width="400px">
+<img src="https://ecostrat.com/wp-content/uploads/nrcan-logo.png" alt="nrcan-logo" width="400px">-->
