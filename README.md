@@ -97,4 +97,4 @@ alignment$plot("extra", compare_to = "fine")
 
 The development of the package was supported by data collected by Jonathan Boucher, Anne Cotton-Gagnon and Jean Marchal with method contribution by Bastien Vandendaele: Canadian Forest Service.
 
-<img src="https://ecostrat.com/wp-content/uploads/nrcan-logo.png", alt="nrcan-logo" width="400px">
+<img src="https://ecostrat.com/wp-content/uploads/nrcan-logo.png" alt="nrcan-logo" width="400px">
