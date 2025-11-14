@@ -126,7 +126,7 @@ acquired from nearly the same location, can be extremely difficult due
 to occlusions, varying scan quality, inconsistent point densities,
 differing scan positions, and orientation errors as shown below</p>
 <div class="figure" style="text-align: left">
-<img src="mls.jpg" alt="Two scans of the same forest plot: left: MLS, right: TLS. In the MLS dataset, all trees are fully sampled, the scene coverage is nearly 100%, with minimal occlusion. In contrast, the TLS dataset consists of only five scans, leading to incomplete coverage: several trees are entirely missing or so sparsely sampled that they are effectively unusable. Most visible trees are scanned only from one side, resulting in significant occlusion and shadow zones. Despite representing the same physical location, these two point clouds differ substantially in terms of available and reliable matching features, which poses a real challenge for alignment." width="100%"><p class="caption">
+<img src="mls.jpg" class="r-plt" alt="Two scans of the same forest plot: left: MLS, right: TLS. In the MLS dataset, all trees are fully sampled, the scene coverage is nearly 100%, with minimal occlusion. In contrast, the TLS dataset consists of only five scans, leading to incomplete coverage: several trees are entirely missing or so sparsely sampled that they are effectively unusable. Most visible trees are scanned only from one side, resulting in significant occlusion and shadow zones. Despite representing the same physical location, these two point clouds differ substantially in terms of available and reliable matching features, which poses a real challenge for alignment." width="100%"><p class="caption">
 Two scans of the same forest plot: left: MLS, right: TLS. In the MLS
 dataset, all trees are fully sampled, the scene coverage is nearly 100%,
 with minimal occlusion. In contrast, the TLS dataset consists of only
@@ -229,7 +229,7 @@ centroids may differ in numerical coordinates, due to differing
 coordinate systems, they should correspond to the same real-world area.
 If not, the point clouds are not suitable for alignment.</p>
 <div class="figure" style="text-align: left">
-<img src="clipped.jpg" alt="ALS, MLS, and TLS datasets clipped to a 20 m radius (TLS was already clipped to 15 m). The bottom view shows that the TLS data was acquired from five scan positions, with sparse data visible between the scans." width="100%"><p class="caption">
+<img src="clipped.jpg" class="r-plt" alt="ALS, MLS, and TLS datasets clipped to a 20 m radius (TLS was already clipped to 15 m). The bottom view shows that the TLS data was acquired from five scan positions, with sparse data visible between the scans." width="100%"><p class="caption">
 ALS, MLS, and TLS datasets clipped to a 20 m radius (TLS was already
 clipped to 15 m). The bottom view shows that the TLS data was acquired
 from five scan positions, with sparse data visible between the scans.
@@ -307,7 +307,7 @@ CHM and 0.5 m for the DTM, the total number of pixels (and thus points
 of interest) used for alignment is limited to a maximum of approximately
 25,000. This keeps the process both efficient and robust.</p>
 <div class="figure" style="text-align: left">
-<img src="chm-dtm-als.jpg" alt="CHM/DTM point clouds for the ALS (top left), MLS (top right) and TLS (bottom left). We can observe the difference of qualities between ALS, MLS and TLS. But nothing that prevent alignment. Canopy gaps, dominant tree, gaps shapes and DTM shapes are visible in all datasets." width="47%"><img src="chm-dtm-mls.jpg" alt="CHM/DTM point clouds for the ALS (top left), MLS (top right) and TLS (bottom left). We can observe the difference of qualities between ALS, MLS and TLS. But nothing that prevent alignment. Canopy gaps, dominant tree, gaps shapes and DTM shapes are visible in all datasets." width="47%"><img src="chm-dtm-tls.jpg" alt="CHM/DTM point clouds for the ALS (top left), MLS (top right) and TLS (bottom left). We can observe the difference of qualities between ALS, MLS and TLS. But nothing that prevent alignment. Canopy gaps, dominant tree, gaps shapes and DTM shapes are visible in all datasets." width="47%"><p class="caption">
+<img src="chm-dtm-als.jpg" class="r-plt" alt="CHM/DTM point clouds for the ALS (top left), MLS (top right) and TLS (bottom left). We can observe the difference of qualities between ALS, MLS and TLS. But nothing that prevent alignment. Canopy gaps, dominant tree, gaps shapes and DTM shapes are visible in all datasets." width="47%"><img src="chm-dtm-mls.jpg" class="r-plt" alt="CHM/DTM point clouds for the ALS (top left), MLS (top right) and TLS (bottom left). We can observe the difference of qualities between ALS, MLS and TLS. But nothing that prevent alignment. Canopy gaps, dominant tree, gaps shapes and DTM shapes are visible in all datasets." width="47%"><img src="chm-dtm-tls.jpg" class="r-plt" alt="CHM/DTM point clouds for the ALS (top left), MLS (top right) and TLS (bottom left). We can observe the difference of qualities between ALS, MLS and TLS. But nothing that prevent alignment. Canopy gaps, dominant tree, gaps shapes and DTM shapes are visible in all datasets." width="47%"><p class="caption">
 CHM/DTM point clouds for the ALS (top left), MLS (top right) and TLS
 (bottom left). We can observe the difference of qualities between ALS,
 MLS and TLS. But nothing that prevent alignment. Canopy gaps, dominant
@@ -364,7 +364,7 @@ alignment. We effectively started from 200 millions points down to 2000
 points for alignment purpose. The brute-force search takes approximately
 4 seconds on a laptop and is multithreaded.</p>
 <div class="figure" style="text-align: center">
-<img src="als-mls-vox2.jpg" alt="The two sampled point clouds effectively used for the coarse alignment" width="50%"><p class="caption">
+<img src="als-mls-vox2.jpg" class="r-plt" alt="The two sampled point clouds effectively used for the coarse alignment" width="50%"><p class="caption">
 The two sampled point clouds effectively used for the coarse alignment
 </p>
 </div>
@@ -404,7 +404,7 @@ sampling.</p>
 reliably aligned in position and orientation. The process then proceeds
 to a finer registration.</p>
 <div class="figure" style="text-align: center">
-<img src="rms.jpg" alt="Exhaustive exploration of all the possible rotations and translation to find the global minimum of RMSE. Here at approximatively -135 degrees and -1 meter on X" width="50%"><p class="caption">
+<img src="rms.jpg" class="r-plt" alt="Exhaustive exploration of all the possible rotations and translation to find the global minimum of RMSE. Here at approximatively -135 degrees and -1 meter on X" width="50%"><p class="caption">
 Exhaustive exploration of all the possible rotations and translation to
 find the global minimum of RMSE. Here at approximatively -135 degrees
 and -1 meter on X
@@ -444,7 +444,7 @@ conservatively set the overlap used in ICP to the minimum between 90%
 and the actual overlap, rounded down to the nearest 10%. In this case,
 we would use 80% overlap in the final fine alignment.</p>
 <div class="figure" style="text-align: center">
-<img src="overlap.png" alt="Partial overlap in point clouds is an extra challenge that required a trimmed ICP approach." width="400px"><p class="caption">
+<img src="overlap.png" class="r-plt" alt="Partial overlap in point clouds is an extra challenge that required a trimmed ICP approach." width="400px"><p class="caption">
 Partial overlap in point clouds is an extra challenge that required a
 trimmed ICP approach.
 </p>
@@ -543,7 +543,7 @@ assume that matching trees are systematically extracted—but some always
 are, and that’s sufficient.</p>
 <p>This step typically takes about 30 secondes of computation time.</p>
 <div class="figure" style="text-align: left">
-<img src="trunks-mls.jpg" alt="The 50 main anisotropic features extracted from each point cloud. As expected, they do not match perfectly, primarily due to the low quality of the TLS data, which suffers from significant occlusion, cast shadows and lack of scan positions (here 5 scans). Despite this, we typically have enough structure to perform a reliable alignment. In practice, even just three matching features would be sufficient for a registration in this context." width="47%"><img src="trunk-tls.jpg" alt="The 50 main anisotropic features extracted from each point cloud. As expected, they do not match perfectly, primarily due to the low quality of the TLS data, which suffers from significant occlusion, cast shadows and lack of scan positions (here 5 scans). Despite this, we typically have enough structure to perform a reliable alignment. In practice, even just three matching features would be sufficient for a registration in this context." width="47%"><p class="caption">
+<img src="trunks-mls.jpg" class="r-plt" alt="The 50 main anisotropic features extracted from each point cloud. As expected, they do not match perfectly, primarily due to the low quality of the TLS data, which suffers from significant occlusion, cast shadows and lack of scan positions (here 5 scans). Despite this, we typically have enough structure to perform a reliable alignment. In practice, even just three matching features would be sufficient for a registration in this context." width="47%"><img src="trunk-tls.jpg" class="r-plt" alt="The 50 main anisotropic features extracted from each point cloud. As expected, they do not match perfectly, primarily due to the low quality of the TLS data, which suffers from significant occlusion, cast shadows and lack of scan positions (here 5 scans). Despite this, we typically have enough structure to perform a reliable alignment. In practice, even just three matching features would be sufficient for a registration in this context." width="47%"><p class="caption">
 The 50 main anisotropic features extracted from each point cloud. As
 expected, they do not match perfectly, primarily due to the low quality
 of the TLS data, which suffers from significant occlusion, cast shadows
@@ -566,7 +566,7 @@ introducing bias from unmatched regions.</p>
 step targets sub-centimeter refinements, leveraging matching parts of
 trunks across scans.</p>
 <div class="figure" style="text-align: left">
-<img src="extrafine.jpg" alt="Tree matching before (left) and after (right) extra fine alignment. We gained a few extra centimeters of translation and a few arcminutes of rotation." width="100%"><img src="extrafine2.jpg" alt="Tree matching before (left) and after (right) extra fine alignment. We gained a few extra centimeters of translation and a few arcminutes of rotation." width="100%"><p class="caption">
+<img src="extrafine.jpg" class="r-plt" alt="Tree matching before (left) and after (right) extra fine alignment. We gained a few extra centimeters of translation and a few arcminutes of rotation." width="100%"><img src="extrafine2.jpg" class="r-plt" alt="Tree matching before (left) and after (right) extra fine alignment. We gained a few extra centimeters of translation and a few arcminutes of rotation." width="100%"><p class="caption">
 Tree matching before (left) and after (right) extra fine alignment. We
 gained a few extra centimeters of translation and a few arcminutes of
 rotation.
@@ -615,7 +615,7 @@ quantitatively validated on Liu’s plots)</li>
 <li>Works with any combination of TLS, MLS, ALS, and ULS</li>
 </ul>
 <div class="figure" style="text-align: center">
-<img src="results.png" alt="Figure 7 from [Liu et al. 2025](http://dx.doi.org/10.1109/TGRS.2025.3569061) on which we overlayed our own results in blue" width="100%"><p class="caption">
+<img src="results.png" class="r-plt" alt="Figure 7 from [Liu et al. 2025](http://dx.doi.org/10.1109/TGRS.2025.3569061) on which we overlayed our own results in blue" width="100%"><p class="caption">
 Figure 7 from <a href="http://dx.doi.org/10.1109/TGRS.2025.3569061" class="external-link">Liu
 et al. 2025</a> on which we overlayed our own results in blue
 </p>
@@ -632,7 +632,7 @@ Core i7-1255-U, 10 cores, 12 threads.</p>
 <li>TLS: 100 millions points</li>
 </ul>
 <div class="figure" style="text-align: center">
-<img src="benchmark.png" alt="Computation time split by step for the alignment of ALS with MLS, and TLS with MLS. The prepare step includes noise classification, ground classification, CHM and DTM computations." width="400px"><p class="caption">
+<img src="benchmark.png" class="r-plt" alt="Computation time split by step for the alignment of ALS with MLS, and TLS with MLS. The prepare step includes noise classification, ground classification, CHM and DTM computations." width="400px"><p class="caption">
 Computation time split by step for the alignment of ALS with MLS, and
 TLS with MLS. The prepare step includes noise classification, ground
 classification, CHM and DTM computations.
@@ -683,7 +683,7 @@ even when large parts of the data don’t match.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer>
