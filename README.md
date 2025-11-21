@@ -3,7 +3,7 @@ lidRalignment <img src="https://raw.githubusercontent.com/r-lidar/lidRalignment/
 
 ![license](https://img.shields.io/badge/Licence-GPL--3-blue.svg)
 
-`lidRalignment` enables automatic alignment of forest plot point clouds from different sources, such as ALS with TLS or MLS, or TLS with MLS, or ALS with ALS in a unified pipeline. The package is robust to large alignment differences (e.g., 180 degrees of misalignment), noise, and leaf-on/leaf-off conditions. A full description of the internal pipeline details is available [:book: here](https://r-lidar.github.io/lidRalignment/articles/internal.html).
+`lidRalignment` enables automatic alignment of forest **plot size** point clouds from different sources, such as ALS with TLS or MLS, or TLS with MLS, or ALS with ALS in a unified pipeline. The package is robust to large alignment differences (e.g., 180 degrees of misalignment), noise, and leaf-on/leaf-off conditions. A full description of the internal pipeline details is available [:book: here](https://r-lidar.github.io/lidRalignment/articles/internal.html).
 
 <img src="vignettes/als-mls.jpg" width="260"/> <img src="vignettes/alignement3.jpg" width="260"/> <img src="vignettes/alignement4.jpg" width="260"/>
 
@@ -95,6 +95,6 @@ alignment$plot("extra", compare_to = "fine")
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Universit%C3%A9_de_Sherbrooke_%28logo%29_%282%29.svg/langfr-1920px-Universit%C3%A9_de_Sherbrooke_%28logo%29_%282%29.svg.png" alt="Sherbrooke university logo" width="400px">
 
-<!-- The development of the package was supported by data collected by Jonathan Boucher, Anne Cotton-Gagnon and Jean Marchal with method contribution by Bastien Vandendaele: Canadian Forest Service.
+The development of the package was supported by data collected by Jonathan Boucher, Anne Cotton-Gagnon and Jean Marchal with method contribution by Bastien Vandendaele: Canadian Forest Service.
 
-<img src="https://ecostrat.com/wp-content/uploads/nrcan-logo.png" alt="nrcan-logo" width="400px">-->
+<img src="https://ecostrat.com/wp-content/uploads/nrcan-logo.png" alt="nrcan-logo" width="400px">
