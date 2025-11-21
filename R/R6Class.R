@@ -370,6 +370,12 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       cat("Extracting features to align from moving point cloud...\n")
       trunks_mov = extract_features(self$full_mov, strategy = "trunks")
 
+      if (lidR::npoints(trunks_mov))
+        stop("No viable strucutre found for alignment in the reference point cloud. Extra fine alignment skipped.")
+
+      if (lidR::npoints(trunks_ref))
+        stop("No viable strucutre found for alignment in the moving point cloud. Extra fine alignment skipped.")
+
       trunks_ref = transform_las(trunks_ref, self$Mglobal)
       trunks_mov = transform_las(trunks_mov, self$Mlocal)
 

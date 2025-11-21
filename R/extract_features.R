@@ -78,9 +78,13 @@ extract_features = function(las, strategy = "chm-dtm", verbose = TRUE)
     las = compute_anisotropy(las, k = 20)
     las = lidR::filter_poi(las, anisotropy > 0.9)
 
+    if (lidR::npoints(las))  return(las)
+
     if(verbose) cat("  Comuting connected component...\n")
     las = lidR::connected_components(las, 0.05, 100)
     las = lidR::filter_poi(las, clusterID > 0)
+
+    if (lidR::npoints(las))  return(las)
 
     if(verbose) cat("  Keeping only 50 most important objects...\n")
     cluster_size = las@data[, .N, by = clusterID]
