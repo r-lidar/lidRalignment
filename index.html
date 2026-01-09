@@ -115,10 +115,11 @@
 <strong>Extra Fine:</strong> Used only when aligning two ground-based point clouds. It extracts trees and aligns them to achieve centimeter-level accuracy.</li>
 </ol>
 <p>A full description of the internal pipeline is available <a href="https://r-lidar.github.io/lidRalignment/articles/internal.html" class="external-link"><span class="emoji" data-emoji="book">📖</span> here</a>.</p>
-<div style="background-color: #fff4e5; border-left: 5px solid #ff9800; padding: 12px 16px; color: #663c00;">
-<p>When aligning airborne data with ground-based data, the airborne point cloud should be used as the reference. The ground point cloud is the moving point cloud, because airborne data are usually better georeferenced.</p>
-<p>When aligning ground-based data with ground-based data, it is recommended to use the better of the two point clouds as the reference, i.e., the one with less occlusion. Typically, the TLS point cloud is moved to align with the MLS reference.</p>
-</div>
+<blockquote>
+<p>[!IMPORTANT]<br>
+When aligning airborne data with ground-based data, the airborne point cloud should be used as the reference. The ground point cloud is the moving point cloud, because airborne data are usually &gt; better georeferenced.</p>
+<p>When aligning ground-based data with ground-based data, it is recommended to use the better of the two point clouds as the reference, i.e., the one with less occlusion. Typically, the TLS point cloud is moved to align with the MLS reference, not the opposite.</p>
+</blockquote>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-lidar/lidR" class="external-link">lidR</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">lidRalignment</span><span class="op">)</span></span>
