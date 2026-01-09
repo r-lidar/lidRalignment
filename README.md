@@ -58,6 +58,7 @@ fmov = "mls_file.las"
 alignment = AlignmentScene$new(fref, fmov)
 alignment$set_ref_is_ground_based(FALSE)
 alignment$set_mov_is_ground_based(TRUE)
+alignment$set_radius(20)
 
 # Run the alignment pipeline
 alignment$align()
