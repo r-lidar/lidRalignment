@@ -111,7 +111,7 @@ transform_las <- function(las, M, crs = NULL)
     lidR::quantize(xyz[["X"]], h[["X scale factor"]], h[["X offset"]])
     lidR::quantize(xyz[["Y"]], h[["Y scale factor"]], h[["Y offset"]])
     lidR::quantize(xyz[["Z"]], h[["Z scale factor"]], h[["Z offset"]])
-    las_new <- lidR::LAS(xyz, h)
+    las_new <- suppressWarnings(lidR::LAS(xyz, h))
 
     if (!is.null(crs))
       lidR::st_crs(las_new) <- crs

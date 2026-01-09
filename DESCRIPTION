@@ -1,7 +1,7 @@
 Package: lidRalignment
 Type: Package
 Title: ALS MLS and TLS forest plot alignment
-Version: 1.0.1
+Version: 1.1.0
 Authors@R: person("Jean-Romain", "Roussel", role = c("aut", "cre"), email = "info@r-lidar.com")
 Description: Alignment of forest plots point clouds (ALS, ULS, MLS, TLS), including complex cases with significant misalignments.
 License: GPL (>= 2)
@@ -22,7 +22,7 @@ Imports:
 Remotes:
     r-lidar/lidR,
     r-lidar/lasR
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Encoding: UTF-8
 LinkingTo: 
     Rcpp,

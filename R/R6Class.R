@@ -161,7 +161,7 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
     },
 
     #' @description
-    #' First function to run. It read the point cloud, extract features, and perform raw alignment
+    #' First function to run. It reads the point cloud, extract features, and performs raw alignment
     prepare = function() {
 
       filter_ref = ""
@@ -276,7 +276,7 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
     #' @param res numeric. Subsampling resolution. Keep it as is.
     #' @param max_offset numeric. Maximum translation possible. Increase if the point cloud are
     #' strongly missaligned on XY.
-    #' @param debug logical.
+    #' @param debug logical. Displays rendering for debugging
     coarse_align = function(res = 2, max_offset = 10, debug = FALSE)
     {
       if (!self$prepare_done)
@@ -289,9 +289,12 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
     #' @description
     #' Third function to run. It perform an ICP alignment
     #' @param overlap numeric trimmed ICP overlap. Can be 10, 20, 30, 40 to 100.
-    #' @param use_cc bool. Use CloudCompare ICP instead of native ICP.
-    fine_align = function(overlap = "auto", use_cc = FALSE)
+    #' @param ... unused
+    fine_align = function(overlap = "auto", ...)
     {
+      p = list(...)
+      use_cc = isTRUE(p$use_cc)
+
       if (!self$coarse_done)
         stop("fine_align() must be called after coarse_align()")
 
@@ -351,8 +354,12 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
 
     #' @description
     #' Fourth function to run. It perform an ICP alignment on the trunks
-    extra_fine_align = function()
+    #' @param ... unused
+    extra_fine_align = function(...)
     {
+      p = list(...)
+      no_z = isTRUE(p$no_z)
+
       if (!self$fine_done)
         stop("extra_fine_align() must be called after fine_align()")
 
@@ -370,11 +377,11 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       cat("Extracting features to align from moving point cloud...\n")
       trunks_mov = extract_features(self$full_mov, strategy = "trunks")
 
-      if (lidR::npoints(trunks_mov))
-        stop("No viable strucutre found for alignment in the reference point cloud. Extra fine alignment skipped.")
+      if (lidR::npoints(trunks_mov) == 0)
+        stop("No viable structure found for alignment in the reference point cloud. Extra fine alignment skipped.")
 
-      if (lidR::npoints(trunks_ref))
-        stop("No viable strucutre found for alignment in the moving point cloud. Extra fine alignment skipped.")
+      if (lidR::npoints(trunks_ref) == 0)
+        stop("No viable strucuture found for alignment in the moving point cloud. Extra fine alignment skipped.")
 
       trunks_ref = transform_las(trunks_ref, self$Mglobal)
       trunks_mov = transform_las(trunks_mov, self$Mlocal)
@@ -382,14 +389,30 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       mov2 = transform_las(trunks_mov, M)
       overlap = 30
 
-      cat("  Iterative closest point extra fine alignment...\n")
 
-      #self$Mex = cc_icp(trunks_ref, mov2, overlap = overlap, cc = self$cc, verbose = FALSE)
-      self$Mex = icp(trunks_ref, mov2, overlap = overlap, rz_only = FALSE)
-      rmsi = attr(self$Mex, "RMSi")
-      rmsf = attr(self$Mex, "RMSf")
-      cat("    RMS initial", round(rmsi, 6), "\n")
-      cat("    RMS final", round(rmsf, 6), "\n")
+      cat("Iterative closest point extra fine alignment...\n")
+
+      M1 = icp(trunks_ref, mov2, overlap = overlap, rz_only = FALSE)
+      M2 = diag(1,4,4)
+
+      if (!no_z)
+      {
+        cat("Iterative closest point extra fine Z alignment...\n")
+
+        mov2 = transform_las(mov2, M1)
+        A = lidR::decimate_points(trunks_ref, lidR::random_per_voxel(0.1))
+        B = lidR::decimate_points(mov2, lidR::random_per_voxel(0.1))
+        #x = plot(A, pal = "yellow")
+        #plot(B, pal = "red", add = x)
+        M2 = icp(A, B, tz_only = TRUE, overlap = overlap)
+        cat("  Z correction: ", round(M2[3,4]*100,1), "cm")
+      }
+
+      #mov2 = transform_las(mov2, M2)
+      #x = plot(trunks_ref, pal = "yellow")
+      #plot(mov2, pal = "red", add = x)
+
+      self$Mex = combine_transformations(M1, M2)
 
       self$trunks_ref = trunks_ref
       self$trunks_mov = trunks_mov

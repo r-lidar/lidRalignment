@@ -60,8 +60,8 @@ extract_features = function(las, strategy = "chm-dtm", verbose = TRUE)
     #las = readLAS("~/Téléchargements/las_mov.las")
 
     if(verbose) cat("  Computing Digital Terrain Model...\n")
-    dtm = suppressMessages(lidR::rasterize_terrain(las, res = 0.1))
-    las = lidR::height_above_ground(las, dtm = dtm, algorithm = lidR::tin())
+    dtm = suppressMessages(lidR::rasterize_terrain(las, res = 0.05))
+    las = lidR::height_above_ground(las, algorithm = dtm)
 
     if(verbose) cat("  Slicing between 0.15 and 3 m...\n")
     las = lidR::filter_poi(las, hag > 0.15, hag < 3)
@@ -99,6 +99,8 @@ extract_features = function(las, strategy = "chm-dtm", verbose = TRUE)
     las = lidR::remove_lasattribute(las, "hag")
     las = lidR::remove_lasattribute(las, "anisotropy")
     las = lidR::remove_lasattribute(las, "clusterID")
+
+    las@header@VLR$Extra_Bytes = NULL
 
     #dtm_points = terra::as.data.frame(dtm, xy = TRUE)
     #names(dtm_points) = c('X', 'Y', 'Z')

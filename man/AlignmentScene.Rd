@@ -117,7 +117,7 @@ Tell the pipeline if the moving point cloud is ground-based (TLS, MLS)
 \if{html}{\out{<a id="method-AlignmentScene-prepare"></a>}}
 \if{latex}{\out{\hypertarget{method-AlignmentScene-prepare}{}}}
 \subsection{Method \code{prepare()}}{
-First function to run. It read the point cloud, extract features, and perform raw alignment
+First function to run. It reads the point cloud, extract features, and performs raw alignment
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{AlignmentScene$prepare()}\if{html}{\out{</div>}}
 }
@@ -140,7 +140,7 @@ Second function to run. It perform a brute force alignment
 \item{\code{max_offset}}{numeric. Maximum translation possible. Increase if the point cloud are
 strongly missaligned on XY.}
 
-\item{\code{debug}}{logical.}
+\item{\code{debug}}{logical. Displays rendering for debugging}
 }
 \if{html}{\out{</div>}}
 }
@@ -151,7 +151,7 @@ strongly missaligned on XY.}
 \subsection{Method \code{fine_align()}}{
 Third function to run. It perform an ICP alignment
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{AlignmentScene$fine_align(overlap = "auto", use_cc = FALSE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{AlignmentScene$fine_align(overlap = "auto", ...)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -159,7 +159,7 @@ Third function to run. It perform an ICP alignment
 \describe{
 \item{\code{overlap}}{numeric trimmed ICP overlap. Can be 10, 20, 30, 40 to 100.}
 
-\item{\code{use_cc}}{bool. Use CloudCompare ICP instead of native ICP.}
+\item{\code{...}}{unused}
 }
 \if{html}{\out{</div>}}
 }
@@ -170,9 +170,16 @@ Third function to run. It perform an ICP alignment
 \subsection{Method \code{extra_fine_align()}}{
 Fourth function to run. It perform an ICP alignment on the trunks
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{AlignmentScene$extra_fine_align()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{AlignmentScene$extra_fine_align(...)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{...}}{unused}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-AlignmentScene-align"></a>}}
