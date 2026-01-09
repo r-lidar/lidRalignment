@@ -39,12 +39,10 @@ The alignment pipeline consists of four stages, progressing from raw to extra-fi
 
 A full description of the internal pipeline is available [:book: here](https://r-lidar.github.io/lidRalignment/articles/internal.html).
  
-<div style="background-color: #fff4e5; border-left: 5px solid #ff9800; padding: 12px 16px; color: #663c00;">
-When aligning airborne data with ground-based data, the airborne point cloud should be used as the reference. The ground point cloud is the moving point cloud, because airborne data are usually better georeferenced.
-
-When aligning ground-based data with ground-based data, it is recommended to use the better of the two point clouds as the reference, i.e., the one with less occlusion. Typically, the TLS point cloud is moved to align with the MLS reference.
-</div>
-
+> [!IMPORTANT]  
+> When aligning airborne data with ground-based data, the airborne point cloud should be used as the reference. The ground point cloud is the moving point cloud, because airborne data are usually > better georeferenced.
+>
+> When aligning ground-based data with ground-based data, it is recommended to use the better of the two point clouds as the reference, i.e., the one with less occlusion. Typically, the TLS point cloud is moved to align with the MLS reference, not the opposite.
  
 ```r
 library(lidR)
