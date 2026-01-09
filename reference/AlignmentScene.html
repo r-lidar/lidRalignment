@@ -19,7 +19,7 @@ process with coarse, fine, and extra-fine alignment stages."><meta property="og:
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">lidRalignment</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.0</span>
       </span>
     </div>
 
@@ -168,7 +168,7 @@ to compute the registration matrix</p></dd>
 
 </div><p></p><hr><a id="method-AlignmentScene-prepare"></a><div class="section">
 <h3 id="method-prepare-">Method <code>prepare()</code><a class="anchor" aria-label="anchor" href="#method-prepare-"></a></h3>
-<p>First function to run. It read the point cloud, extract features, and perform raw alignment</p><div class="section">
+<p>First function to run. It reads the point cloud, extract features, and performs raw alignment</p><div class="section">
 <h4 id="usage-5">Usage<a class="anchor" aria-label="anchor" href="#usage-5"></a></h4>
 <p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">AlignmentScene</span><span class="op">$</span><span class="fu">prepare</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
@@ -193,7 +193,7 @@ strongly missaligned on XY.</p></dd>
 
 
 <dt><code>debug</code></dt>
-<dd><p>logical.</p></dd>
+<dd><p>logical. Displays rendering for debugging</p></dd>
 
 
 </dl><p></p></div>
@@ -203,7 +203,7 @@ strongly missaligned on XY.</p></dd>
 <h3 id="method-fine-align-">Method <code>fine_align()</code><a class="anchor" aria-label="anchor" href="#method-fine-align-"></a></h3>
 <p>Third function to run. It perform an ICP alignment</p><div class="section">
 <h4 id="usage-7">Usage<a class="anchor" aria-label="anchor" href="#usage-7"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">AlignmentScene</span><span class="op">$</span><span class="fu">fine_align</span><span class="op">(</span>overlap <span class="op">=</span> <span class="st">"auto"</span>, use_cc <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">AlignmentScene</span><span class="op">$</span><span class="fu">fine_align</span><span class="op">(</span>overlap <span class="op">=</span> <span class="st">"auto"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
 <div class="section">
@@ -212,8 +212,8 @@ strongly missaligned on XY.</p></dd>
 <dd><p>numeric trimmed ICP overlap. Can be 10, 20, 30, 40 to 100.</p></dd>
 
 
-<dt><code>use_cc</code></dt>
-<dd><p>bool. Use CloudCompare ICP instead of native ICP.</p></dd>
+<dt><code>...</code></dt>
+<dd><p>unused</p></dd>
 
 
 </dl><p></p></div>
@@ -223,9 +223,17 @@ strongly missaligned on XY.</p></dd>
 <h3 id="method-extra-fine-align-">Method <code>extra_fine_align()</code><a class="anchor" aria-label="anchor" href="#method-extra-fine-align-"></a></h3>
 <p>Fourth function to run. It perform an ICP alignment on the trunks</p><div class="section">
 <h4 id="usage-8">Usage<a class="anchor" aria-label="anchor" href="#usage-8"></a></h4>
-<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">AlignmentScene</span><span class="op">$</span><span class="fu">extra_fine_align</span><span class="op">(</span><span class="op">)</span></span></code></pre></div><p></p></div>
+<p></p><div class="r"><div class="sourceCode"><pre><code><span><span class="va">AlignmentScene</span><span class="op">$</span><span class="fu">extra_fine_align</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div><p></p></div>
 </div>
 
+<div class="section">
+<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
+<p></p><div class="arguments"><dl><dt><code>...</code></dt>
+<dd><p>unused</p></dd>
+
+
+</dl><p></p></div>
+</div>
 
 </div><p></p><hr><a id="method-AlignmentScene-align"></a><div class="section">
 <h3 id="method-align-">Method <code>align()</code><a class="anchor" aria-label="anchor" href="#method-align-"></a></h3>
@@ -235,7 +243,7 @@ strongly missaligned on XY.</p></dd>
 </div>
 
 <div class="section">
-<h4 id="arguments-6">Arguments<a class="anchor" aria-label="anchor" href="#arguments-6"></a></h4>
+<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>res</code></dt>
 <dd><p>numeric. Subsampling resolution. Keep it as is.</p></dd>
 
@@ -259,7 +267,7 @@ strongly missaligned on XY.</p></dd>
 </div>
 
 <div class="section">
-<h4 id="arguments-7">Arguments<a class="anchor" aria-label="anchor" href="#arguments-7"></a></h4>
+<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>which</code></dt>
 <dd><p>string. The alignment level to plot</p></dd>
 
@@ -288,7 +296,7 @@ of registration performed</p><div class="section">
 </div>
 
 <div class="section">
-<h4 id="arguments-8">Arguments<a class="anchor" aria-label="anchor" href="#arguments-8"></a></h4>
+<h4 id="arguments-9">Arguments<a class="anchor" aria-label="anchor" href="#arguments-9"></a></h4>
 <p></p><div class="arguments"><dl><dt><code>deep</code></dt>
 <dd><p>Whether to make a deep clone.</p></dd>
 

@@ -34,7 +34,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">lidRalignment</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.0</span>
       </span>
     </div>
 
@@ -77,7 +77,8 @@
 <div class="float">
 <img src="https://img.shields.io/badge/Licence-GPL--3-blue.svg" alt="license"><div class="figcaption">license</div>
 </div>
-<p><code>lidRalignment</code> enables automatic alignment of forest <strong>plot size</strong> point clouds from different sources, such as ALS with TLS or MLS, or TLS with MLS, or ALS with ALS in a unified pipeline. The package is robust to large alignment differences (e.g., 180 degrees of misalignment), noise, and leaf-on/leaf-off conditions. A full description of the internal pipeline details is available <a href="https://r-lidar.github.io/lidRalignment/articles/internal.html" class="external-link"><span class="emoji" data-emoji="book">📖</span> here</a>.</p>
+<p><code>lidRalignment</code> enables automatic alignment of forest <strong>plot-scale</strong> point clouds from different sources, such as ALS with TLS or MLS, TLS with MLS, or ALS with ALS, within a unified pipeline.</p>
+<p>The package is robust to large alignment differences (e.g., up to 180 degrees of misalignment), noise, and leaf-on/leaf-off conditions, and it is <strong>parameterless</strong>. A full description of the internal pipeline is available <a href="https://r-lidar.github.io/lidRalignment/articles/internal.html" class="external-link"><span class="emoji" data-emoji="book">📖</span> here</a>.</p>
 <p><img src="articles/als-mls.jpg" width="260"><img src="articles/alignement3.jpg" width="260"><img src="articles/alignement4.jpg" width="260"></p>
 <div class="section level2">
 <h2 id="features">Features<a class="anchor" aria-label="anchor" href="#features"></a>
@@ -86,37 +87,42 @@
 <li>Aligns forest plots from any combination of ALS, ULS, TLS, and MLS point clouds</li>
 <li>Robust to large alignment differences (e.g., 180 degrees of misalignment)</li>
 <li>Supports noisy and poor-quality data</li>
-<li>Uses the same pipeline for all cases</li>
-<li>Fast and efficient: alignment takes only a few seconds. Most of the computation time is spent reading the LAS or LAZ files</li>
-<li>No parameter</li>
-<li>Tested on a massive dataset (more than 80 plots)</li>
+<li>Uses a single pipeline for all cases</li>
+<li>Fast and efficient: alignment takes only a few seconds; most of the computation time is spent reading the LAZ files</li>
+<li>No parameters required</li>
+<li>Tested on a large dataset (more than 100 plots)</li>
 </ul>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You need the latest version of <code>lidR</code> and <code>lasR</code>:</p>
+<p>You need the latest versions of <code>lidR</code> and <code>lasR</code>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'lidR'</span>, <span class="st">'lasR'</span>, <span class="st">'lidRalignment'</span><span class="op">)</span>, repos <span class="op">=</span> <span class="st">'https://r-lidar.r-universe.dev'</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="tutorial">Tutorial<a class="anchor" aria-label="anchor" href="#tutorial"></a>
 </h2>
-<p>The alignment pipeline consists of four stages, progressing from raw to extra fine:</p>
+<p>The alignment pipeline consists of four stages, progressing from raw to extra-fine:</p>
 <ol style="list-style-type: decimal">
 <li>
 <strong>Raw:</strong> Roughly aligns the plot centers.</li>
 <li>
-<strong>Coarse</strong>: Uses the DTM and CHM to align the point clouds at low resolution. This stage can handle highly misaligned scenes.</li>
+<strong>Coarse:</strong> Uses the DTM and CHM to align the point clouds at low resolution. This stage can handle highly misaligned scenes.</li>
 <li>
-<strong>Fine</strong>: Applies an iterative closest point (ICP) approach to finely align the CHM and DTM.</li>
+<strong>Fine:</strong> Applies an Iterative Closest Point (ICP) approach to finely align the CHM and DTM.</li>
 <li>
-<strong>Extra Fine</strong>: Used only when aligning two ground-based point clouds. It extracts trees and aligns them to achieve centimeter-level accuracy.</li>
+<strong>Extra Fine:</strong> Used only when aligning two ground-based point clouds. It extracts trees and aligns them to achieve centimeter-level accuracy.</li>
 </ol>
-<p>A full description of the internal pipeline details is available <a href="https://r-lidar.github.io/lidRalignment/articles/internal.html" class="external-link"><span class="emoji" data-emoji="book">📖</span> here</a>.</p>
+<p>A full description of the internal pipeline is available <a href="https://r-lidar.github.io/lidRalignment/articles/internal.html" class="external-link"><span class="emoji" data-emoji="book">📖</span> here</a>.</p>
+<div style="background-color: #fff4e5; border-left: 5px solid #ff9800; padding: 12px 16px; color: #663c00;">
+<p>When aligning airborne data with ground-based data, the airborne point cloud should be used as the reference. The ground point cloud is the moving point cloud, because airborne data are usually better georeferenced.</p>
+<p>When aligning ground-based data with ground-based data, it is recommended to use the better of the two point clouds as the reference, i.e., the one with less occlusion. Typically, the TLS point cloud is moved to align with the MLS reference.</p>
+</div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-lidar/lidR" class="external-link">lidR</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">lidRalignment</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>lidR.progress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">fref</span> <span class="op">=</span> <span class="st">"als_file.las"</span></span>
 <span><span class="va">fmov</span> <span class="op">=</span> <span class="st">"mls_file.las"</span></span>
