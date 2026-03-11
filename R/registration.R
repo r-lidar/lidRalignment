@@ -114,7 +114,7 @@ brute_force_registration <- function(ref, mov, res = 2, max_offset = 8, verbose 
     dxy = dxy[!duplicated(dxy),]
     u = terra::focal(dtm_ref, w = 3, fun = "mean")
     terra::plot(u, col = lidR::height.colors(25), main = "Tested XY translation")
-    points(dxy, cex = 0.5, pch = 3)
+    graphics::points(dxy, cex = 0.5, pch = 3)
   }
 
   param_grid <- as.matrix(param_grid)
