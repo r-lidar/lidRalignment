@@ -3,7 +3,7 @@ library(dplyr)
 library(tidyr)
 
 dir = "Y:/Documents/Usherbrooke/data/ForestReg"
-dir = "/home/jr/Documents/Usherbrooke/data/ForestReg"
+dir = "/home/jr/Documents/Usherbrooke/Registration/data/ForestReg"
 
 files = list.files(dir, recursive = TRUE, pattern = ".las", full.names = TRUE)
 dirs <- dirname(files)
@@ -68,10 +68,10 @@ for (i in 1:17)
   alignment$prepare()
   #alignment$plot("raw")
 
-  alignment$coarse_align(res = 2, max_offset = 20, debug = T)
+  alignment$coarse_align(res = 2, max_offset = 20, debug = F)
   #alignment$plot("coarse")
 
-  alignment$fine_align(use_cc = F)
+  alignment$fine_align()
   #alignment$plot("fine")
 
   M = alignment$get_registration_matrix()
