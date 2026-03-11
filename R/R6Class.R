@@ -316,7 +316,7 @@ AlignmentScene <- R6::R6Class("AlignmentScene",
       mov_chm = transform_las(mov_chm, self$M0)
 
       if (!use_cc)
-        self$M1 = icp(ref_chm, mov_chm, rz_only = TRUE, overlap = overlap)
+        self$M1 = icp(ref_chm, mov_chm, tz_only = FALSE, rz_only = FALSE, overlap = overlap)
       else
         self$M1 = cc_icp(ref_chm, mov_chm, rot = "XYZ", overlap = overlap)
 
